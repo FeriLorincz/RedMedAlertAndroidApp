@@ -1,0 +1,2 @@
+com.feri.redmedalertandroidapp.test:style/WhiteBackgroundTheme = 0x7f010001
+com.feri.redmedalertandroidapp.test:style/WhiteBackgroundDialogTheme = 0x7f010000

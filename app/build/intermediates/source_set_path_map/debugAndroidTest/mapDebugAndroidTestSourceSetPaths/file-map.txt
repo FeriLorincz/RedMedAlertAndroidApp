@@ -1,0 +1,6 @@
+com.feri.redmedalertandroidapp.test.app-annotation-experimental-1.3.1-0 C:\Users\PC\.gradle\caches\transforms-4\be35cbe14ff9ab92f47a581051391eb7\transformed\annotation-experimental-1.3.1\res
+com.feri.redmedalertandroidapp.test.app-core-1.5.0-1 C:\Users\PC\.gradle\caches\transforms-4\cee746edace11f49ac220f9165419377\transformed\core-1.5.0\res
+com.feri.redmedalertandroidapp.test.app-androidTest-2 C:\projects\RedMedAlertAndroidApp\app\build\generated\res\resValues\androidTest\debug
+com.feri.redmedalertandroidapp.test.app-mergeDebugAndroidTestResources-3 C:\projects\RedMedAlertAndroidApp\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
+com.feri.redmedalertandroidapp.test.app-mergeDebugAndroidTestResources-4 C:\projects\RedMedAlertAndroidApp\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
+com.feri.redmedalertandroidapp.test.app-debugAndroidTest-5 C:\projects\RedMedAlertAndroidApp\app\build\intermediates\merged_res\debugAndroidTest\mergeDebugAndroidTestResources

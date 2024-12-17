@@ -1,0 +1,20 @@
+// Project level build.gradle
+buildscript {
+    ext {
+        agp_version = '8.5.0'
+    }
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:$agp_version"
+    }
+}
+
+// Înlocuim task-ul deprecated
+tasks.register('clean', Delete) {
+    delete layout.buildDirectory
+}
