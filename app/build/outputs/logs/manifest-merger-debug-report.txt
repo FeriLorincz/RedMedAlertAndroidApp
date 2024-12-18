@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:2:1-49:12
-INJECTED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:2:1-49:12
-INJECTED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:2:1-49:12
-INJECTED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:2:1-49:12
+ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:2:1-60:12
+INJECTED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:2:1-60:12
+INJECTED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:2:1-60:12
+INJECTED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:2:1-60:12
 MERGED from [samsung-health-data-1.5.1.aar] C:\Users\PC\.gradle\caches\transforms-4\8df2d94d134384e3be90d3de8bf26ee2\transformed\samsung-health-data-1.5.1\AndroidManifest.xml:2:1-13:12
 MERGED from [com.google.android.material:material:1.11.0] C:\Users\PC\.gradle\caches\transforms-4\a950811c61b652c1b56248c8809a2c02\transformed\material-1.11.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\PC\.gradle\caches\transforms-4\a0eeccb7ffd15c0167bdf5c22a10ec1b\transformed\constraintlayout-2.1.4\AndroidManifest.xml:2:1-11:12
@@ -91,17 +91,29 @@ uses-permission#com.samsung.android.health.permission.write
 ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:10:5-83
 	android:name
 		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:10:22-80
+uses-feature#android.hardware.sensor.accelerometer
+ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:11:5-98
+	android:required
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:11:72-95
+	android:name
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:11:19-71
+uses-feature#android.hardware.sensor.gyroscope
+ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:12:5-94
+	android:required
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:12:68-91
+	android:name
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:12:19-67
 queries
-ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:12:5-14:15
+ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:14:5-16:15
 MERGED from [samsung-health-data-1.5.1.aar] C:\Users\PC\.gradle\caches\transforms-4\8df2d94d134384e3be90d3de8bf26ee2\transformed\samsung-health-data-1.5.1\AndroidManifest.xml:7:5-9:15
 MERGED from [samsung-health-data-1.5.1.aar] C:\Users\PC\.gradle\caches\transforms-4\8df2d94d134384e3be90d3de8bf26ee2\transformed\samsung-health-data-1.5.1\AndroidManifest.xml:7:5-9:15
 package#com.samsung.android.health
-ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:13:9-62
+ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:15:9-62
 	android:name
-		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:13:18-59
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:15:18-59
 application
-ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:16:5-47:19
-INJECTED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:16:5-47:19
+ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:18:5-58:19
+INJECTED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:18:5-58:19
 MERGED from [com.google.android.material:material:1.11.0] C:\Users\PC\.gradle\caches\transforms-4\a950811c61b652c1b56248c8809a2c02\transformed\material-1.11.0\AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.11.0] C:\Users\PC\.gradle\caches\transforms-4\a950811c61b652c1b56248c8809a2c02\transformed\material-1.11.0\AndroidManifest.xml:22:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\PC\.gradle\caches\transforms-4\a0eeccb7ffd15c0167bdf5c22a10ec1b\transformed\constraintlayout-2.1.4\AndroidManifest.xml:9:5-20
@@ -127,47 +139,53 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\PC
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.9.0] C:\Users\PC\.gradle\caches\transforms-4\bec518f7ba301709c7e76ad2c216d08c\transformed\core-1.9.0\AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:21:9-35
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:23:9-35
 	android:label
-		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:19:9-41
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:21:9-41
 	android:roundIcon
-		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:20:9-54
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:22:9-54
 	android:icon
-		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:18:9-43
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:20:9-43
 	android:allowBackup
-		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:17:9-35
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:19:9-35
 	android:theme
-		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:22:9-59
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:24:9-59
 	android:networkSecurityConfig
-		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:23:9-69
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:25:9-69
 activity#com.feri.redmedalertandroidapp.MainActivity
-ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:25:9-32:20
+ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:27:9-34:20
 	android:exported
-		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:27:13-36
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:29:13-36
 	android:name
-		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:26:13-41
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:28:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:28:13-31:29
+ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:30:13-33:29
 action#android.intent.action.MAIN
-ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:29:17-69
+ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:31:17-69
 	android:name
-		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:29:25-66
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:31:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:30:17-77
+ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:32:17-77
 	android:name
-		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:30:27-74
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:32:27-74
 activity#com.feri.redmedalertandroidapp.TestActivity
-ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:34:9-41:20
+ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:36:9-43:20
 	android:exported
-		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:36:13-36
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:38:13-36
 	android:name
-		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:35:13-41
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:37:13-41
+activity#com.feri.redmedalertandroidapp.SensorTestActivity
+ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:45:9-52:20
+	android:exported
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:47:13-36
+	android:name
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:46:13-47
 meta-data#com.samsung.android.health.permission.read
-ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:44:9-46:62
+ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:55:9-57:62
 	android:value
-		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:46:13-59
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:57:13-59
 	android:name
-		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:45:13-70
+		ADDED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml:56:13-70
 uses-sdk
 INJECTED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\projects\RedMedAlertAndroidApp\app\src\main\AndroidManifest.xml

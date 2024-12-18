@@ -4,10 +4,16 @@ color black
 color white
 drawable ic_launcher_background
 drawable ic_launcher_foreground
+id fallDetectionText
+id healthDataText
 id main
+id motionDataText
+id sensorTestButton
 id statusText
+id stressLevelText
 id testButton
 layout activity_main
+layout activity_sensor_test
 layout activity_test
 mipmap ic_launcher
 mipmap ic_launcher_round

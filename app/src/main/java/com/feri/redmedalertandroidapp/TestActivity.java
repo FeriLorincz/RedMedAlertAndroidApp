@@ -1,5 +1,6 @@
 package com.feri.redmedalertandroidapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -52,6 +53,12 @@ public class TestActivity extends AppCompatActivity {
                     });
                 }
             });
+        });
+
+        Button sensorTestButton = findViewById(R.id.sensorTestButton);
+        sensorTestButton.setOnClickListener(v -> {
+            Intent intent = new Intent(TestActivity.this, SensorTestActivity.class);
+            startActivity(intent);
         });
     }
 }

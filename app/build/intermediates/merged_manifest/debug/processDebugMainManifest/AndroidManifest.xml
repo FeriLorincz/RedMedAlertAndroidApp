@@ -16,6 +16,13 @@
     <uses-permission android:name="com.samsung.android.health.permission.read" />
     <uses-permission android:name="com.samsung.android.health.permission.write" />
 
+    <uses-feature
+        android:name="android.hardware.sensor.accelerometer"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.sensor.gyroscope"
+        android:required="true" />
+
     <queries>
         <package android:name="com.samsung.android.health" />
         <package android:name="com.sec.android.app.shealth" />
@@ -41,7 +48,6 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:testOnly="true"
         android:theme="@style/Theme.RedMedAlertAndroidApp" >
         <activity
             android:name="com.feri.redmedalertandroidapp.MainActivity"
@@ -54,6 +60,15 @@
         </activity>
         <activity
             android:name="com.feri.redmedalertandroidapp.TestActivity"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.feri.redmedalertandroidapp.SensorTestActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

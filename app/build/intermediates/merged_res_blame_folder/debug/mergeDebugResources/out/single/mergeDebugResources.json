@@ -20,6 +20,10 @@
         "source": "com.feri.redmedalertandroidapp-main-39:/mipmap-xxxhdpi/ic_launcher.webp"
     },
     {
+        "merged": "com.feri.redmedalertandroidapp-debug-37:/layout_activity_sensor_test.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-39:/layout/activity_sensor_test.xml"
+    },
+    {
         "merged": "com.feri.redmedalertandroidapp-debug-37:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
         "source": "com.feri.redmedalertandroidapp-main-39:/mipmap-xxhdpi/ic_launcher_round.webp"
     },
