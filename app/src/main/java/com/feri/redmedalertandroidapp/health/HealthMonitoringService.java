@@ -19,12 +19,17 @@ public class HealthMonitoringService extends Service{
 
     private static final String TAG = "HealthMonitoringService";
     private HealthDataReader healthDataReader;
+    private MotionSensorReader motionSensorReader;
     private HealthDataApiManager apiManager;
     private boolean isMonitoring = false;
+    private SensorDataSimulator simulator;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // Inițializăm motion sensor reader
+        motionSensorReader = new MotionSensorReader(this);
        // Inițializăm API Manager cu datele salvate
         SharedPreferences prefs = getApplicationContext()
                 .getSharedPreferences("RedMedAlert", Context.MODE_PRIVATE);
@@ -38,13 +43,55 @@ public class HealthMonitoringService extends Service{
         ApiTestManager testManager = new ApiTestManager(authToken, deviceId, userId);
         testManager.testApiConnection();
 
+
+        // Inițializăm simulatorul
+        simulator = new SensorDataSimulator();
+        simulator.start(data -> {
+            // Procesăm datele simulate ca și cum ar veni de la un dispozitiv real
+            apiManager.sendHealthData(data, new HealthDataApiManager.ApiCallback() {
+                @Override
+                public void onSuccess() {
+                    Log.d(TAG, "Simulated data sent successfully");
+                }
+
+                @Override
+                public void onError(String message) {
+                    Log.e(TAG, "Error sending simulated data: " + message);
+                }
+            });
+        });
+
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (simulator != null) {
+            simulator.stop();
+        }
+    }
+
 
     public void startMonitoring(HealthDataStore healthDataStore) {
         if (isMonitoring) return;
 
         healthDataReader = new HealthDataReader(healthDataStore);
         isMonitoring = true;
+
+        // Pornim citirea datelor de la senzorii de mișcare
+        motionSensorReader.startReading(new MotionSensorReader.MotionDataListener() {
+            @Override
+            public void onMotionDataReceived(Map<String, Double[]> motionData) {
+                // Procesăm datele de la senzori
+                processMotionData(motionData);
+            }
+
+            @Override
+            public void onMotionError(String message) {
+                Log.e(TAG, "Motion sensor error: " + message);
+            }
+        });
+
         startDataReading();
     }
 
@@ -75,8 +122,28 @@ public class HealthMonitoringService extends Service{
             }
         });
     }
+
+    private void processMotionData(Map<String, Double[]> motionData) {
+        // Aici vom procesa datele de la accelerometru și giroscop
+        // Pentru moment doar le logăm
+        if (motionData.containsKey("accelerometer")) {
+            Double[] accData = motionData.get("accelerometer");
+            Log.d(TAG, String.format("Accelerometer - X: %.2f, Y: %.2f, Z: %.2f",
+                    accData[0], accData[1], accData[2]));
+        }
+
+        if (motionData.containsKey("gyroscope")) {
+            Double[] gyroData = motionData.get("gyroscope");
+            Log.d(TAG, String.format("Gyroscope - X: %.2f, Y: %.2f, Z: %.2f",
+                    gyroData[0], gyroData[1], gyroData[2]));
+        }
+    }
+
     public void stopMonitoring() {
         isMonitoring = false;
+        if (motionSensorReader != null) {
+            motionSensorReader.stopReading();
+        }
     }
 
     @Nullable

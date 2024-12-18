@@ -3255,6 +3255,7 @@ id exitUntilCollapsed
 id expand_activities_button
 id expanded_menu
 id fade
+id fallDetectionText
 id fill
 id fill_horizontal
 id fill_vertical
@@ -3280,6 +3281,7 @@ id group_divider
 id grouping
 id groups
 id header_title
+id healthDataText
 id hideable
 id home
 id homeAsUp
@@ -3347,6 +3349,7 @@ id month_navigation_fragment_toggle
 id month_navigation_next
 id month_navigation_previous
 id month_title
+id motionDataText
 id motion_base
 id mtrl_anchor_parent
 id mtrl_calendar_day_selector_frame
@@ -3461,6 +3464,7 @@ id search_voice_btn
 id select_dialog_listview
 id selected
 id selection_type
+id sensorTestButton
 id sharedValueSet
 id sharedValueUnset
 id shortcut
@@ -3496,6 +3500,7 @@ id staticLayout
 id staticPostLayout
 id statusText
 id stop
+id stressLevelText
 id stretch
 id submenuarrow
 id submit_area
@@ -3685,6 +3690,7 @@ layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
 layout activity_main
+layout activity_sensor_test
 layout activity_test
 layout custom_dialog
 layout design_bottom_navigation_item
