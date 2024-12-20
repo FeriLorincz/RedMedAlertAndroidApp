@@ -3,49 +3,49 @@
 3    package="com.feri.redmedalertandroidapp.test" >
 4
 5    <uses-sdk
-5-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest11729965498168092068.xml:5:5-74
+5-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest316858168237271819.xml:5:5-74
 6        android:minSdkVersion="27"
-6-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest11729965498168092068.xml:5:15-41
+6-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest316858168237271819.xml:5:15-41
 7        android:targetSdkVersion="34" />
-7-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest11729965498168092068.xml:5:42-71
+7-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest316858168237271819.xml:5:42-71
 8
 9    <instrumentation
-9-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest11729965498168092068.xml:11:5-15:80
+9-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest316858168237271819.xml:11:5-15:80
 10        android:name="androidx.test.runner.AndroidJUnitRunner"
-10-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest11729965498168092068.xml:11:22-76
+10-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest316858168237271819.xml:11:22-76
 11        android:functionalTest="false"
-11-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest11729965498168092068.xml:14:22-52
+11-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest316858168237271819.xml:14:22-52
 12        android:handleProfiling="false"
-12-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest11729965498168092068.xml:13:22-53
+12-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest316858168237271819.xml:13:22-53
 13        android:label="Tests for com.feri.redmedalertandroidapp"
-13-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest11729965498168092068.xml:15:22-78
+13-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest316858168237271819.xml:15:22-78
 14        android:targetPackage="com.feri.redmedalertandroidapp" />
-14-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest11729965498168092068.xml:12:22-76
+14-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest316858168237271819.xml:12:22-76
 15
-16    <uses-permission android:name="android.permission.REORDER_TASKS" />
-16-->[androidx.test:core:1.5.0] C:\Users\PC\.gradle\caches\transforms-4\cee746edace11f49ac220f9165419377\transformed\core-1.5.0\AndroidManifest.xml:24:5-72
-16-->[androidx.test:core:1.5.0] C:\Users\PC\.gradle\caches\transforms-4\cee746edace11f49ac220f9165419377\transformed\core-1.5.0\AndroidManifest.xml:24:22-69
-17
-18    <queries>
-18-->[androidx.test:runner:1.5.2] C:\Users\PC\.gradle\caches\transforms-4\8ea7b731b656476aebe68379232297b7\transformed\runner-1.5.2\AndroidManifest.xml:24:5-28:15
-19        <package android:name="androidx.test.orchestrator" />
-19-->[androidx.test:runner:1.5.2] C:\Users\PC\.gradle\caches\transforms-4\8ea7b731b656476aebe68379232297b7\transformed\runner-1.5.2\AndroidManifest.xml:25:9-62
-19-->[androidx.test:runner:1.5.2] C:\Users\PC\.gradle\caches\transforms-4\8ea7b731b656476aebe68379232297b7\transformed\runner-1.5.2\AndroidManifest.xml:25:18-59
-20        <package android:name="androidx.test.services" />
-20-->[androidx.test:runner:1.5.2] C:\Users\PC\.gradle\caches\transforms-4\8ea7b731b656476aebe68379232297b7\transformed\runner-1.5.2\AndroidManifest.xml:26:9-58
-20-->[androidx.test:runner:1.5.2] C:\Users\PC\.gradle\caches\transforms-4\8ea7b731b656476aebe68379232297b7\transformed\runner-1.5.2\AndroidManifest.xml:26:18-55
-21        <package android:name="com.google.android.apps.common.testing.services" />
-21-->[androidx.test:runner:1.5.2] C:\Users\PC\.gradle\caches\transforms-4\8ea7b731b656476aebe68379232297b7\transformed\runner-1.5.2\AndroidManifest.xml:27:9-83
-21-->[androidx.test:runner:1.5.2] C:\Users\PC\.gradle\caches\transforms-4\8ea7b731b656476aebe68379232297b7\transformed\runner-1.5.2\AndroidManifest.xml:27:18-80
-22    </queries>
+16    <queries>
+16-->[androidx.test:runner:1.5.2] C:\Users\PC\.gradle\caches\transforms-4\8ea7b731b656476aebe68379232297b7\transformed\runner-1.5.2\AndroidManifest.xml:24:5-28:15
+17        <package android:name="androidx.test.orchestrator" />
+17-->[androidx.test:runner:1.5.2] C:\Users\PC\.gradle\caches\transforms-4\8ea7b731b656476aebe68379232297b7\transformed\runner-1.5.2\AndroidManifest.xml:25:9-62
+17-->[androidx.test:runner:1.5.2] C:\Users\PC\.gradle\caches\transforms-4\8ea7b731b656476aebe68379232297b7\transformed\runner-1.5.2\AndroidManifest.xml:25:18-59
+18        <package android:name="androidx.test.services" />
+18-->[androidx.test:runner:1.5.2] C:\Users\PC\.gradle\caches\transforms-4\8ea7b731b656476aebe68379232297b7\transformed\runner-1.5.2\AndroidManifest.xml:26:9-58
+18-->[androidx.test:runner:1.5.2] C:\Users\PC\.gradle\caches\transforms-4\8ea7b731b656476aebe68379232297b7\transformed\runner-1.5.2\AndroidManifest.xml:26:18-55
+19        <package android:name="com.google.android.apps.common.testing.services" />
+19-->[androidx.test:runner:1.5.2] C:\Users\PC\.gradle\caches\transforms-4\8ea7b731b656476aebe68379232297b7\transformed\runner-1.5.2\AndroidManifest.xml:27:9-83
+19-->[androidx.test:runner:1.5.2] C:\Users\PC\.gradle\caches\transforms-4\8ea7b731b656476aebe68379232297b7\transformed\runner-1.5.2\AndroidManifest.xml:27:18-80
+20    </queries>
+21
+22    <uses-permission android:name="android.permission.REORDER_TASKS" />
+22-->[androidx.test:core:1.5.0] C:\Users\PC\.gradle\caches\transforms-4\cee746edace11f49ac220f9165419377\transformed\core-1.5.0\AndroidManifest.xml:24:5-72
+22-->[androidx.test:core:1.5.0] C:\Users\PC\.gradle\caches\transforms-4\cee746edace11f49ac220f9165419377\transformed\core-1.5.0\AndroidManifest.xml:24:22-69
 23
 24    <application
-24-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest11729965498168092068.xml:7:5-9:19
+24-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest316858168237271819.xml:7:5-9:19
 25        android:debuggable="true"
 26        android:extractNativeLibs="false" >
 27        <uses-library android:name="android.test.runner" />
-27-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest11729965498168092068.xml:8:9-60
-27-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest11729965498168092068.xml:8:23-57
+27-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest316858168237271819.xml:8:9-60
+27-->C:\projects\RedMedAlertAndroidApp\app\build\intermediates\tmp\manifest\androidTest\debug\tempFile1ProcessTestManifest316858168237271819.xml:8:23-57
 28
 29        <activity
 29-->[androidx.test:core:1.5.0] C:\Users\PC\.gradle\caches\transforms-4\cee746edace11f49ac220f9165419377\transformed\core-1.5.0\AndroidManifest.xml:27:9-34:20

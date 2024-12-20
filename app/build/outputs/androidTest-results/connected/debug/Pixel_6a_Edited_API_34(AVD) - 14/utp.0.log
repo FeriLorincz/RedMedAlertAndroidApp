@@ -1,0 +1,32 @@
+INFO: Constructing runner from config.
+INFO: Configuring Android Instrumentation driver: android_instrumentation_runtime {
+  instrumentation_info {
+    app_package: "com.feri.redmedalertandroidapp"
+    test_package: "com.feri.redmedalertandroidapp.test"
+    test_runner_class: "androidx.test.runner.AndroidJUnitRunner"
+  }
+  instrumentation_args {
+    args_map {
+      key: "additionalTestOutputDir"
+      value: "/sdcard/Android/media/com.feri.redmedalertandroidapp/additional_test_output"
+    }
+    args_map {
+      key: "class"
+      value: "com.feri.redmedalertandroidapp.health.HealthDataTests"
+    }
+  }
+}
+am_instrument_timeout: 31536000
+
+INFO: No installables found in test fixture. Nothing to install.
+INFO: Installing [C:\projects\RedMedAlertAndroidApp\app\build\intermediates\apk\debug\app-debug.apk] on device emulator-5554.
+SEVERE: recordTestResultEvent failed with an error: io.grpc.StatusRuntimeException: CANCELLED: RST_STREAM closed stream. HTTP/2 error code: CANCEL
+SEVERE: Exception while executing runnable io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1StreamClosed@67741358
+INFO: Installing [C:\projects\RedMedAlertAndroidApp\app\build\intermediates\apk\androidTest\debug\app-debug-androidTest.apk] on device emulator-5554.
+INFO: Start logcat streaming.
+INFO: Running Android Instrumentation driver.
+WARNING: Failed to retrieve logcat for some test cases. We retrieved logcat for 0 test cases out of 1 tests.
+INFO: Stop logcat streaming.
+INFO: Uninstalling com.feri.redmedalertandroidapp for device emulator-5554.
+INFO: Uninstalling com.feri.redmedalertandroidapp.test for device emulator-5554.
+SEVERE: Execute com.feri.redmedalertandroidapp.health.HealthDataTests.testInvalidData: FAILED

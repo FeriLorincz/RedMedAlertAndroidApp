@@ -13,13 +13,13 @@
         android:label="Tests for com.feri.redmedalertandroidapp"
         android:targetPackage="com.feri.redmedalertandroidapp" />
 
-    <uses-permission android:name="android.permission.REORDER_TASKS" />
-
     <queries>
         <package android:name="androidx.test.orchestrator" />
         <package android:name="androidx.test.services" />
         <package android:name="com.google.android.apps.common.testing.services" />
     </queries>
+
+    <uses-permission android:name="android.permission.REORDER_TASKS" />
 
     <application
         android:debuggable="true"
