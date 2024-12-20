@@ -41,6 +41,10 @@ public class HealthDataReader {
         readBloodPressure(startTime, endTime, latestData, listener);
         readTemperature(startTime, endTime, latestData, listener);
         readSleep(startTime, endTime, latestData, listener);
+        readBioactiveData(startTime, endTime, latestData, listener);
+        readBiaData(startTime, endTime, latestData, listener);
+        readSleep(startTime, endTime, latestData, listener);
+        readBarometerData(startTime, endTime, latestData, listener);
     }
 
     private final StressCalculator stressCalculator = new StressCalculator();
@@ -199,6 +203,89 @@ public class HealthDataReader {
         } catch (Exception e) {
             Log.e(TAG, "Error reading sleep data: " + e.getMessage());
             listener.onDataReadError("Failed to read sleep data");
+        }
+    }
+
+
+
+    private void readBioactiveData(long startTime, long endTime, Map<String, Double> latestData, HealthDataListener listener) {
+        ReadRequest bioactiveRequest = new ReadRequest.Builder()
+                .setDataType("com.samsung.health.bioactive_data")
+                .setProperties(new String[] {
+                        "bioactive_type",
+                        "bioactive_value"
+                })
+                .setLocalTimeRange("start_time", "time_offset", startTime, endTime)
+                .build();
+
+        try {
+            resolver.read(bioactiveRequest).setResultListener(result -> {
+                try {
+                    for (HealthData data : result) {
+                        latestData.put("bioactive_" + data.getString("bioactive_type"),
+                                data.getDouble("bioactive_value"));
+                    }
+                } finally {
+                    result.close();
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "Error reading bioactive data: " + e.getMessage());
+            listener.onDataReadError("Failed to read bioactive data");
+        }
+    }
+
+    private void readBiaData(long startTime, long endTime, Map<String, Double> latestData, HealthDataListener listener) {
+        ReadRequest biaRequest = new ReadRequest.Builder()
+                .setDataType("com.samsung.health.body_composition")
+                .setProperties(new String[] {
+                        "body_fat",
+                        "skeletal_muscle",
+                        "body_water"
+                })
+                .setLocalTimeRange("start_time", "time_offset", startTime, endTime)
+                .build();
+
+        try {
+            resolver.read(biaRequest).setResultListener(result -> {
+                try {
+                    for (HealthData data : result) {
+                        latestData.put("body_fat", data.getDouble("body_fat"));
+                        latestData.put("skeletal_muscle", data.getDouble("skeletal_muscle"));
+                        latestData.put("body_water", data.getDouble("body_water"));
+                    }
+                } finally {
+                    result.close();
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "Error reading BIA data: " + e.getMessage());
+            listener.onDataReadError("Failed to read BIA data");
+        }
+    }
+
+    private void readBarometerData(long startTime, long endTime, Map<String, Double> latestData, HealthDataListener listener) {
+        ReadRequest barometerRequest = new ReadRequest.Builder()
+                .setDataType("com.samsung.health.ambient_pressure")
+                .setProperties(new String[] {
+                        "pressure"
+                })
+                .setLocalTimeRange("start_time", "time_offset", startTime, endTime)
+                .build();
+
+        try {
+            resolver.read(barometerRequest).setResultListener(result -> {
+                try {
+                    for (HealthData data : result) {
+                        latestData.put("pressure", data.getDouble("pressure"));
+                    }
+                } finally {
+                    result.close();
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "Error reading barometer data: " + e.getMessage());
+            listener.onDataReadError("Failed to read barometer data");
         }
     }
 

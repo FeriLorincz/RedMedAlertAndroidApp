@@ -1,7 +1,6 @@
 package com.feri.redmedalertandroidapp.api.model;
 
 import com.google.gson.annotations.SerializedName;
-
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -21,6 +20,11 @@ public class HealthDataPayload {
 
     @SerializedName("timestamp")
     private String timestamp;
+
+    // Constructor pentru test
+    public HealthDataPayload(Map<String, Double> data) {
+        this("test-device", "test-user", data);
+    }
 
     public HealthDataPayload(String deviceId, String userId, Map<String, Double> sensorData) {
         this.deviceId = deviceId;
