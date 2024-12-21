@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.feri.redmedalertandroidapp-mergeDebugResources-35:/values/values.xml",
+            "outputFile": "com.feri.redmedalertandroidapp-mergeDebugResources-36:/values/values.xml",
             "map": [
                 {
                     "source": "C:\\Users\\PC\\.gradle\\caches\\transforms-4\\b9a5365c9fde6a39700fe2c932acd593\\transformed\\appcompat-1.6.1\\res\\values\\values.xml",
@@ -78,23 +78,6 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\PC\\.gradle\\caches\\transforms-4\\78cdb26efdfd14a7a8e20fbc9eb27355\\transformed\\lifecycle-runtime-2.6.1\\res\\values\\values.xml",
-                    "from": {
-                        "startLines": "2",
-                        "startColumns": "4",
-                        "startOffsets": "55",
-                        "endColumns": "42",
-                        "endOffsets": "93"
-                    },
-                    "to": {
-                        "startLines": "1865",
-                        "startColumns": "4",
-                        "startOffsets": "123453",
-                        "endColumns": "42",
-                        "endOffsets": "123491"
-                    }
-                },
-                {
                     "source": "C:\\Users\\PC\\.gradle\\caches\\transforms-4\\896e9e2e0732481cbf275e6be93dd3c4\\transformed\\appcompat-resources-1.6.1\\res\\values\\values.xml",
                     "from": {
                         "startLines": "2,18,24,34,50",
@@ -152,20 +135,20 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\PC\\.gradle\\caches\\transforms-4\\3832843ca82a1b2f91e8afeccd1d5988\\transformed\\lifecycle-viewmodel-2.6.1\\res\\values\\values.xml",
+                    "source": "C:\\Users\\PC\\.gradle\\caches\\transforms-4\\55d8594a519877bf1084c1c40ad71a2a\\transformed\\lifecycle-runtime-2.7.0\\res\\values\\values.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
                         "startOffsets": "55",
-                        "endColumns": "49",
-                        "endOffsets": "100"
+                        "endColumns": "42",
+                        "endOffsets": "93"
                     },
                     "to": {
-                        "startLines": "1868",
+                        "startLines": "1865",
                         "startColumns": "4",
-                        "startOffsets": "123610",
-                        "endColumns": "49",
-                        "endOffsets": "123655"
+                        "startOffsets": "123453",
+                        "endColumns": "42",
+                        "endOffsets": "123491"
                     }
                 },
                 {
@@ -382,6 +365,23 @@
                         "endLines": "138,141,1055,11226",
                         "endColumns": "55,47,51,24",
                         "endOffsets": "7047,7203,62919,712836"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\PC\\.gradle\\caches\\transforms-4\\d3cd37953d2e6e76b5871dcf94ce4bad\\transformed\\lifecycle-viewmodel-2.7.0\\res\\values\\values.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "49",
+                        "endOffsets": "100"
+                    },
+                    "to": {
+                        "startLines": "1868",
+                        "startColumns": "4",
+                        "startOffsets": "123610",
+                        "endColumns": "49",
+                        "endOffsets": "123655"
                     }
                 }
             ]

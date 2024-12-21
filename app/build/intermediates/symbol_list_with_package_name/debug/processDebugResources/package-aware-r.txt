@@ -2988,6 +2988,7 @@ drawable design_snackbar_background
 drawable ic_arrow_back_black_24
 drawable ic_clear_black_24
 drawable ic_clock_black_24dp
+drawable ic_heart_notification
 drawable ic_keyboard_black_24dp
 drawable ic_launcher_background
 drawable ic_launcher_foreground
@@ -3171,7 +3172,9 @@ id bounce
 id bounceBoth
 id bounceEnd
 id bounceStart
+id btnNotificationSettings
 id buttonPanel
+id button_reset
 id cache_measures
 id callMeasure
 id cancel_button
@@ -3246,6 +3249,8 @@ id east
 id edge
 id edit_query
 id elastic
+id emailInput
+id emailLayout
 id embed
 id end
 id endToStart
@@ -3260,6 +3265,8 @@ id fill
 id fill_horizontal
 id fill_vertical
 id filled
+id firstNameInput
+id firstNameLayout
 id fitCenter
 id fitEnd
 id fitStart
@@ -3304,6 +3311,8 @@ id item_touch_helper_previous_elevation
 id jumpToEnd
 id jumpToStart
 id labeled
+id lastNameInput
+id lastNameLayout
 id layout
 id left
 id leftToRight
@@ -3315,6 +3324,7 @@ id listMode
 id list_item
 id m3_side_sheet
 id main
+id mainText
 id marquee
 id masked
 id match_constraint
@@ -3424,6 +3434,8 @@ id path
 id pathRelative
 id peekHeight
 id percent
+id phoneInput
+id phoneLayout
 id pin
 id position
 id postLayout
@@ -3441,6 +3453,7 @@ id right_icon
 id right_side
 id rounded
 id row_index_key
+id saveButton
 id save_non_transition_alpha
 id save_overlay_view
 id sawtooth
@@ -3500,11 +3513,19 @@ id staticLayout
 id staticPostLayout
 id statusText
 id stop
+id streetInput
+id streetLayout
 id stressLevelText
 id stretch
 id submenuarrow
 id submit_area
 id supportScrollUp
+id switch_data_collection
+id switch_data_upload
+id switch_error_notifications
+id switch_sound
+id switch_vibrate
+id tabLayout
 id tabMode
 id tag_accessibility_actions
 id tag_accessibility_clickable_spans
@@ -3558,6 +3579,7 @@ id unlabeled
 id up
 id useLogo
 id vertical_only
+id viewPager
 id view_offset_helper
 id view_transition
 id view_tree_lifecycle_owner
@@ -3689,7 +3711,9 @@ layout abc_search_dropdown_item_icons_2line
 layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
+layout activity_dashboard
 layout activity_main
+layout activity_notification_settings
 layout activity_sensor_test
 layout activity_test
 layout custom_dialog
@@ -3708,6 +3732,7 @@ layout design_navigation_menu
 layout design_navigation_menu_item
 layout design_text_input_end_icon
 layout design_text_input_start_icon
+layout fragment_personal_data
 layout m3_alert_dialog
 layout m3_alert_dialog_actions
 layout m3_alert_dialog_title

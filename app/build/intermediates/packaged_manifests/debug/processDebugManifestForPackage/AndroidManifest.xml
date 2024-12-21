@@ -23,6 +23,8 @@
         android:name="android.hardware.sensor.gyroscope"
         android:required="true" />
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <queries>
         <package android:name="com.samsung.android.health" />
         <package android:name="com.sec.android.app.shealth" />
@@ -48,7 +50,6 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:testOnly="true"
         android:theme="@style/Theme.RedMedAlertAndroidApp" >
         <activity
             android:name="com.feri.redmedalertandroidapp.MainActivity"
@@ -76,6 +77,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.feri.redmedalertandroidapp.notification.NotificationSettingsActivity"
+            android:exported="false"
+            android:label="Setări Notificări" >
         </activity>
 
         <!-- Samsung Health App ID -->

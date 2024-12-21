@@ -9,9 +9,8 @@ import com.feri.redmedalertandroidapp.api.service.ApiCallback;
 import com.feri.redmedalertandroidapp.api.service.HealthDataApiService;
 import com.feri.redmedalertandroidapp.api.validator.HealthDataValidator;
 import com.samsung.android.sdk.healthdata.BuildConfig;
+import com.feri.redmedalertandroidapp.notification.NotificationService;
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.provider.Settings;
 import java.util.Map;
@@ -33,12 +32,14 @@ public class ApiClient {
     private static ApiClient instance = null;
     private final HealthDataApiService apiService;
     private final Context context;
+    private final NotificationService notificationService;
 
     // Constructor privat pentru Singleton
     private ApiClient(Context context) {
-        this.context = context.getApplicationContext(); // Folosim ApplicationContext pentru a evita memory leaks
+        this.context = context.getApplicationContext();
         retrofit = getClient();
         apiService = retrofit.create(HealthDataApiService.class);
+        notificationService = new NotificationService(context);
     }
 
     // Metodă pentru obținerea instanței singleton
@@ -114,10 +115,12 @@ public class ApiClient {
             public void onResponse(Call<Void> call, retrofit2.Response<Void> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "Data uploaded successfully");
+                    notificationService.showDataUploadNotification(true);
                     if (callback != null) callback.onSuccess();
                 } else {
                     String error = "Upload failed: " + response.code();
                     Log.e(TAG, error);
+                    notificationService.showDataUploadNotification(false);
                     if (callback != null) callback.onError(error);
                 }
             }
@@ -126,6 +129,7 @@ public class ApiClient {
             public void onFailure(Call<Void> call, Throwable t) {
                 String error = "Upload failed: " + t.getMessage();
                 Log.e(TAG, error, t);
+                notificationService.showDataUploadNotification(false);
                 if (callback != null) callback.onError(error);
             }
         });

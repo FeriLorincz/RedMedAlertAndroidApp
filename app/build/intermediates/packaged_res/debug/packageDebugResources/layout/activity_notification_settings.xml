@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Setări Notificări"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="24dp"/>
+
+    <Switch
+        android:id="@+id/switch_data_collection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Arată notificări colectare date"
+        android:padding="12dp"/>
+
+    <Switch
+        android:id="@+id/switch_data_upload"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Arată notificări upload date"
+        android:padding="12dp"/>
+
+    <Switch
+        android:id="@+id/switch_error_notifications"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Arată notificări erori"
+        android:padding="12dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#CCCCCC"
+        android:layout_margin="16dp"/>
+
+    <Switch
+        android:id="@+id/switch_vibrate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Vibrații"
+        android:padding="12dp"/>
+
+    <Switch
+        android:id="@+id/switch_sound"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sunet"
+        android:padding="12dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <Button
+        android:id="@+id/button_reset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Resetează la valorile implicite"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"/>
+
+</LinearLayout>
