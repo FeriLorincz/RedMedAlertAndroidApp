@@ -7,8 +7,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.feri.redmedalertandroidapp.api.model.MedicalProfile;
+import com.feri.redmedalertandroidapp.api.model.Medication;
 import com.feri.redmedalertandroidapp.repository.MedicalProfileRepository;
 import com.feri.redmedalertandroidapp.repository.RepositoryCallback;
+
 import java.util.List;
 import java.util.Set;
 
@@ -17,6 +19,7 @@ public class MedicalProfileViewModel extends AndroidViewModel {
     private final MedicalProfileRepository repository;
     private final MutableLiveData<String> error = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
+    private final MutableLiveData<MedicalProfile> currentProfile = new MutableLiveData<>();
 
     public interface UpdateCallback {
         void onSuccess();
@@ -29,7 +32,7 @@ public class MedicalProfileViewModel extends AndroidViewModel {
     }
 
     public LiveData<MedicalProfile> getCurrentProfile() {
-        return repository.getCurrentProfile();
+        return currentProfile;
     }
 
     public LiveData<String> getError() {
@@ -42,16 +45,28 @@ public class MedicalProfileViewModel extends AndroidViewModel {
 
     public void loadProfileData(String userId) {
         isLoading.setValue(true);
-        repository.fetchProfileByUserId(userId);
-        isLoading.setValue(false);
+        repository.fetchProfileByUserId(userId, new RepositoryCallback<MedicalProfile>() {
+            @Override
+            public void onSuccess(MedicalProfile result) {
+                isLoading.setValue(false);
+                currentProfile.setValue(result);
+            }
+
+            @Override
+            public void onError(String message) {
+                isLoading.setValue(false);
+                error.setValue(message);
+            }
+        });
     }
 
     public void updateProfile(MedicalProfile profile, UpdateCallback callback) {
         isLoading.setValue(true);
-        repository.updateProfile(profile.getIdMedicalProfile(), profile, new RepositoryCallback<MedicalProfile>() {
+        repository.updateMedicalProfile(profile.getIdMedicalProfile(), profile, new RepositoryCallback<MedicalProfile>() {
             @Override
             public void onSuccess(MedicalProfile result) {
                 isLoading.setValue(false);
+                currentProfile.setValue(result);
                 callback.onSuccess();
             }
 
@@ -65,11 +80,11 @@ public class MedicalProfileViewModel extends AndroidViewModel {
     }
 
     public void addDisease(String disease) {
-        MedicalProfile currentProfile = getCurrentProfile().getValue();
-        if (currentProfile != null) {
-            Set<String> diseases = currentProfile.getCurrentDiseases();
+        MedicalProfile currentProfileValue = currentProfile.getValue();
+        if (currentProfileValue != null) {
+            Set<String> diseases = currentProfileValue.getCurrentDiseases();
             diseases.add(disease);
-            updateProfile(currentProfile, new UpdateCallback() {
+            updateProfile(currentProfileValue, new UpdateCallback() {
                 @Override
                 public void onSuccess() {
                     // Disease added successfully
@@ -84,11 +99,11 @@ public class MedicalProfileViewModel extends AndroidViewModel {
     }
 
     public void removeDisease(String disease) {
-        MedicalProfile currentProfile = getCurrentProfile().getValue();
-        if (currentProfile != null) {
-            Set<String> diseases = currentProfile.getCurrentDiseases();
+        MedicalProfile currentProfileValue = currentProfile.getValue();
+        if (currentProfileValue != null) {
+            Set<String> diseases = currentProfileValue.getCurrentDiseases();
             diseases.remove(disease);
-            updateProfile(currentProfile, new UpdateCallback() {
+            updateProfile(currentProfileValue, new UpdateCallback() {
                 @Override
                 public void onSuccess() {
                     // Disease removed successfully
@@ -103,11 +118,11 @@ public class MedicalProfileViewModel extends AndroidViewModel {
     }
 
     public void updateAthleticHistory(boolean hasHistory, String details) {
-        MedicalProfile currentProfile = getCurrentProfile().getValue();
-        if (currentProfile != null) {
-            currentProfile.setHasAthleticHistory(hasHistory);
-            currentProfile.setAthleticHistoryDetails(details);
-            updateProfile(currentProfile, new UpdateCallback() {
+        MedicalProfile currentProfileValue = currentProfile.getValue();
+        if (currentProfileValue != null) {
+            currentProfileValue.setHasAthleticHistory(hasHistory);
+            currentProfileValue.setAthleticHistoryDetails(details);
+            updateProfile(currentProfileValue, new UpdateCallback() {
                 @Override
                 public void onSuccess() {
                     // Athletic history updated successfully
@@ -122,12 +137,12 @@ public class MedicalProfileViewModel extends AndroidViewModel {
     }
 
     public void updateConsents(boolean gdpr, boolean disclaimer, boolean emergencyEntry) {
-        MedicalProfile currentProfile = getCurrentProfile().getValue();
-        if (currentProfile != null) {
-            currentProfile.setGdprConsent(gdpr);
-            currentProfile.setDisclaimerAccepted(disclaimer);
-            currentProfile.setEmergencyEntryPermission(emergencyEntry);
-            updateProfile(currentProfile, new UpdateCallback() {
+        MedicalProfile currentProfileValue = currentProfile.getValue();
+        if (currentProfileValue != null) {
+            currentProfileValue.setGdprConsent(gdpr);
+            currentProfileValue.setDisclaimerAccepted(disclaimer);
+            currentProfileValue.setEmergencyEntryPermission(emergencyEntry);
+            updateProfile(currentProfileValue, new UpdateCallback() {
                 @Override
                 public void onSuccess() {
                     // Consents updated successfully

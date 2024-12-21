@@ -1,5 +1,7 @@
 package com.feri.redmedalertandroidapp.api.service;
 
+import com.feri.redmedalertandroidapp.api.model.EmergencyContact;
+import com.feri.redmedalertandroidapp.api.model.MedicalProfile;
 import com.feri.redmedalertandroidapp.api.model.User;
 import retrofit2.Call;
 import retrofit2.http.*;
@@ -27,4 +29,12 @@ public interface UserApiService {
 
     @GET("api/users/phone/{phoneNumber}")
     Call<User> getUserByPhone(@Path("phoneNumber") String phoneNumber);
+
+    // Add new endpoint for fetching user's emergency contacts
+    @GET("api/users/{id}/emergency-contacts")
+    Call<List<EmergencyContact>> getUserEmergencyContacts(@Path("id") String userId);
+
+    // Add new endpoint for fetching user's medical profile
+    @GET("api/users/{id}/medical-profile")
+    Call<MedicalProfile> getUserMedicalProfile(@Path("id") String userId);
 }

@@ -117,6 +117,9 @@ public class MedicalProfileFragment extends Fragment{
         gdprConsentCheck.setChecked(profile.isGdprConsent());
         disclaimerCheck.setChecked(profile.isDisclaimerAccepted());
         emergencyEntryCheck.setChecked(profile.isEmergencyEntryPermission());
+
+        // Setup medications adapter
+        // ... cod pentru RecyclerView cu medicamente
     }
 
     private void addDiseaseChip(String disease) {

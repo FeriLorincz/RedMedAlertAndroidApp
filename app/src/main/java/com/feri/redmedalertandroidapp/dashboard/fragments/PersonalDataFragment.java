@@ -14,7 +14,11 @@ import com.feri.redmedalertandroidapp.R;
 import com.feri.redmedalertandroidapp.api.model.AddressUser;
 import com.feri.redmedalertandroidapp.api.model.User;
 import com.feri.redmedalertandroidapp.viewmodel.UserViewModel;
+import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.textfield.TextInputEditText;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 public class PersonalDataFragment extends Fragment{
 
@@ -23,8 +27,10 @@ public class PersonalDataFragment extends Fragment{
     private TextInputEditText lastNameInput;
     private TextInputEditText phoneInput;
     private TextInputEditText emailInput;
+    private TextInputEditText dateOfBirthInput;
     private TextInputEditText streetInput;
     private Button saveButton;
+    private User currentUser;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,13 +54,36 @@ public class PersonalDataFragment extends Fragment{
         lastNameInput = view.findViewById(R.id.lastNameInput);
         phoneInput = view.findViewById(R.id.phoneInput);
         emailInput = view.findViewById(R.id.emailInput);
+        dateOfBirthInput = view.findViewById(R.id.dateOfBirthInput);
         streetInput = view.findViewById(R.id.streetInput);
         saveButton = view.findViewById(R.id.saveButton);
+
+        // Setup date picker for date of birth
+        setupDatePicker();
+    }
+
+    private void setupDatePicker() {
+        dateOfBirthInput.setOnClickListener(v -> {
+            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
+                    .setTitleText("Select date of birth")
+                    .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                    .build();
+
+            datePicker.addOnPositiveButtonClickListener(selection -> {
+                LocalDate selectedDate = Instant.ofEpochMilli(selection)
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate();
+                dateOfBirthInput.setText(selectedDate.toString());
+            });
+
+            datePicker.show(getParentFragmentManager(), "DATE_PICKER");
+        });
     }
 
     private void setupObservers() {
         userViewModel.getCurrentUser().observe(getViewLifecycleOwner(), user -> {
             if (user != null) {
+                currentUser = user;
                 populateFields(user);
             }
         });
@@ -69,35 +98,51 @@ public class PersonalDataFragment extends Fragment{
         lastNameInput.setText(user.getLastNameUser());
         phoneInput.setText(user.getPhoneNumberUser());
         emailInput.setText(user.getEmailUser());
+        if (user.getDateOfBirthUser() != null) {
+            dateOfBirthInput.setText(user.getDateOfBirthUser().toString());
+        }
 
         AddressUser address = user.getAddressUser();
         if (address != null) {
             streetInput.setText(address.getStreetUser());
-            // Populate other address fields
         }
     }
 
     private void saveUserData() {
-        User updatedUser = new User();
-        updatedUser.setFirstNameUser(firstNameInput.getText().toString());
-        updatedUser.setLastNameUser(lastNameInput.getText().toString());
-        updatedUser.setPhoneNumberUser(phoneInput.getText().toString());
-        updatedUser.setEmailUser(emailInput.getText().toString());
+        if (currentUser == null) {
+            currentUser = new User();
+        }
 
-        AddressUser address = new AddressUser();
+        currentUser.setFirstNameUser(firstNameInput.getText().toString());
+        currentUser.setLastNameUser(lastNameInput.getText().toString());
+        currentUser.setPhoneNumberUser(phoneInput.getText().toString());
+        currentUser.setEmailUser(emailInput.getText().toString());
+
+        String dateOfBirthStr = dateOfBirthInput.getText().toString();
+        if (!dateOfBirthStr.isEmpty()) {
+            currentUser.setDateOfBirthUser(LocalDate.parse(dateOfBirthStr));
+        }
+
+        AddressUser address = currentUser.getAddressUser();
+        if (address == null) {
+            address = new AddressUser();
+        }
         address.setStreetUser(streetInput.getText().toString());
-        // Set other address fields
-        updatedUser.setAddressUser(address);
+        currentUser.setAddressUser(address);
 
-        userViewModel.updateUser(updatedUser, new UserViewModel.UpdateCallback() {
+        userViewModel.updateUser(currentUser, new UserViewModel.UpdateCallback() {
             @Override
             public void onSuccess() {
-                Toast.makeText(requireContext(), "Datele au fost salvate cu succes", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(),
+                        "Datele au fost salvate cu succes",
+                        Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(String message) {
-                Toast.makeText(requireContext(), "Eroare: " + message, Toast.LENGTH_LONG).show();
+                Toast.makeText(requireContext(),
+                        "Eroare: " + message,
+                        Toast.LENGTH_LONG).show();
             }
         });
     }

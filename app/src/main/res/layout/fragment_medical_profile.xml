@@ -26,10 +26,10 @@
 
         <Button
             android:id="@+id/addDiseaseButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Adaugă boală"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_marginBottom="16dp"/>
 
         <TextView

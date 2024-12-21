@@ -7,6 +7,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.feri.redmedalertandroidapp.api.RetrofitClient;
 import com.feri.redmedalertandroidapp.api.model.User;
+import com.feri.redmedalertandroidapp.api.model.EmergencyContact;
+import com.feri.redmedalertandroidapp.api.model.MedicalProfile;
 import com.feri.redmedalertandroidapp.api.service.UserApiService;
 
 import retrofit2.Call;
@@ -119,6 +121,42 @@ public class UserRepository {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 callback.onError("Failed to delete user: " + t.getMessage());
+            }
+        });
+    }
+
+    public void fetchUserEmergencyContacts(String userId, RepositoryCallback<List<EmergencyContact>> callback) {
+        userApiService.getUserEmergencyContacts(userId).enqueue(new Callback<List<EmergencyContact>>() {
+            @Override
+            public void onResponse(Call<List<EmergencyContact>> call, Response<List<EmergencyContact>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError("Error fetching emergency contacts: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<EmergencyContact>> call, Throwable t) {
+                callback.onError("Failed to fetch emergency contacts: " + t.getMessage());
+            }
+        });
+    }
+
+    public void fetchUserMedicalProfile(String userId, RepositoryCallback<MedicalProfile> callback) {
+        userApiService.getUserMedicalProfile(userId).enqueue(new Callback<MedicalProfile>() {
+            @Override
+            public void onResponse(Call<MedicalProfile> call, Response<MedicalProfile> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError("Error fetching medical profile: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MedicalProfile> call, Throwable t) {
+                callback.onError("Failed to fetch medical profile: " + t.getMessage());
             }
         });
     }
