@@ -28,6 +28,14 @@
         "source": "com.feri.redmedalertandroidapp-main-40:/layout/activity_test.xml"
     },
     {
+        "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_fragment_sensor_data.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-40:/layout/fragment_sensor_data.xml"
+    },
+    {
+        "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_item_medication.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-40:/layout/item_medication.xml"
+    },
+    {
         "merged": "com.feri.redmedalertandroidapp-debug-38:/mipmap-anydpi_ic_launcher.xml.flat",
         "source": "com.feri.redmedalertandroidapp-main-40:/mipmap-anydpi/ic_launcher.xml"
     },
@@ -38,6 +46,10 @@
     {
         "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_activity_notification_settings.xml.flat",
         "source": "com.feri.redmedalertandroidapp-main-40:/layout/activity_notification_settings.xml"
+    },
+    {
+        "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_fragment_emergency_contacts.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-40:/layout/fragment_emergency_contacts.xml"
     },
     {
         "merged": "com.feri.redmedalertandroidapp-debug-38:/mipmap-mdpi_ic_launcher_round.webp.flat",
@@ -64,8 +76,16 @@
         "source": "com.feri.redmedalertandroidapp-main-40:/mipmap-xxxhdpi/ic_launcher.webp"
     },
     {
+        "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_dialog_medication.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-40:/layout/dialog_medication.xml"
+    },
+    {
         "merged": "com.feri.redmedalertandroidapp-debug-38:/mipmap-xxhdpi_ic_launcher.webp.flat",
         "source": "com.feri.redmedalertandroidapp-main-40:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_dialog_emergency_contact.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-40:/layout/dialog_emergency_contact.xml"
     },
     {
         "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_activity_dashboard.xml.flat",
@@ -80,8 +100,16 @@
         "source": "com.feri.redmedalertandroidapp-main-40:/mipmap-hdpi/ic_launcher_round.webp"
     },
     {
+        "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_item_emergency_contact.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-40:/layout/item_emergency_contact.xml"
+    },
+    {
         "merged": "com.feri.redmedalertandroidapp-debug-38:/mipmap-hdpi_ic_launcher.webp.flat",
         "source": "com.feri.redmedalertandroidapp-main-40:/mipmap-hdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_fragment_medical_profile.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-40:/layout/fragment_medical_profile.xml"
     },
     {
         "merged": "com.feri.redmedalertandroidapp-debug-38:/mipmap-xhdpi_ic_launcher_round.webp.flat",

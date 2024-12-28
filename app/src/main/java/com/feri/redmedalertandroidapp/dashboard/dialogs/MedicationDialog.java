@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.DatePicker;
 import androidx.appcompat.app.AlertDialog;
 import com.feri.redmedalertandroidapp.R;
+import com.feri.redmedalertandroidapp.api.model.MedicalProfile;
 import com.feri.redmedalertandroidapp.api.model.Medication;
 import com.google.android.material.textfield.TextInputEditText;
 import java.time.LocalDate;
@@ -19,7 +20,7 @@ public class MedicationDialog {
     private final OnMedicationSaveListener listener;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private Medication existingMedication;
-
+    private MedicalProfile medicalProfile;
     private TextInputEditText nameInput;
     private TextInputEditText dosageInput;
     private TextInputEditText startDateInput;
@@ -29,9 +30,10 @@ public class MedicationDialog {
         void onMedicationSaved(Medication medication);
     }
 
-    public MedicationDialog(Context context, OnMedicationSaveListener listener) {
+    public MedicationDialog(Context context, OnMedicationSaveListener listener, MedicalProfile medicalProfile) {
         this.context = context;
         this.listener = listener;
+        this.medicalProfile = medicalProfile;
     }
 
     public void show(Medication medication) {
@@ -105,6 +107,7 @@ public class MedicationDialog {
         medication.setMedicationName(name);
         medication.setMedicationDosage(dosage);
         medication.setMedicationStartDate(selectedDate);
+        medication.setMedicalProfile(medicalProfile);
 
         listener.onMedicationSaved(medication);
     }

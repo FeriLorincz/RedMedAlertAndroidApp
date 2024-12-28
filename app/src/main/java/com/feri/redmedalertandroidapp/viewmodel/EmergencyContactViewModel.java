@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.feri.redmedalertandroidapp.api.model.EmergencyContact;
 import com.feri.redmedalertandroidapp.repository.EmergencyContactRepository;
-
+import com.feri.redmedalertandroidapp.repository.RepositoryCallback;
 import java.util.List;
 
 public class EmergencyContactViewModel extends AndroidViewModel {
@@ -38,7 +38,7 @@ public class EmergencyContactViewModel extends AndroidViewModel {
     }
 
     public void createContact(EmergencyContact contact, UpdateCallback callback) {
-        repository.createContact(contact, new EmergencyContactRepository.RepositoryCallback<EmergencyContact>() {
+        repository.createContact(contact, new RepositoryCallback<EmergencyContact>() {
             @Override
             public void onSuccess(EmergencyContact result) {
                 callback.onSuccess();
@@ -53,7 +53,7 @@ public class EmergencyContactViewModel extends AndroidViewModel {
     }
 
     public void updateContact(String contactId, EmergencyContact contact, UpdateCallback callback) {
-        repository.updateContact(contactId, contact, new EmergencyContactRepository.RepositoryCallback<EmergencyContact>() {
+        repository.updateContact(contactId, contact, new RepositoryCallback<EmergencyContact>() {
             @Override
             public void onSuccess(EmergencyContact result) {
                 callback.onSuccess();
@@ -68,7 +68,7 @@ public class EmergencyContactViewModel extends AndroidViewModel {
     }
 
     public void deleteContact(String contactId, UpdateCallback callback) {
-        repository.deleteContact(contactId, new EmergencyContactRepository.RepositoryCallback<Void>() {
+        repository.deleteContact(contactId, new RepositoryCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
                 callback.onSuccess();
