@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import androidx.room.Room;
 
-import com.feri.redmedalertandroidapp.api.database.AppDatabase;
+import com.feri.redmedalertandroidapp.api.database.HealthDatabase;
 import com.feri.redmedalertandroidapp.api.model.HealthDataEntity;
 import com.feri.redmedalertandroidapp.api.dao.HealthDataDao;
 
@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
 public class SensorDataCache {
 
     private static final String TAG = "SensorDataCache";
-    private final AppDatabase database;
+    private final HealthDatabase database;
     private final HealthDataDao healthDataDao;
     private final ExecutorService executorService;
     private static final int CACHE_THRESHOLD = 100; // Număr maxim de înregistrări cache
@@ -30,7 +30,7 @@ public class SensorDataCache {
     public SensorDataCache(Context context) {
         database = Room.databaseBuilder(
                 context.getApplicationContext(),
-                AppDatabase.class,
+                HealthDatabase.class,
                 "sensor-cache-db"
         ).build();
 

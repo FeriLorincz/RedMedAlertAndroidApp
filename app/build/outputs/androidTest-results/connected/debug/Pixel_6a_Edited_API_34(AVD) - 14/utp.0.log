@@ -1,0 +1,43 @@
+INFO: Constructing runner from config.
+INFO: Configuring Android Instrumentation driver: android_instrumentation_runtime {
+  instrumentation_info {
+    app_package: "com.feri.redmedalertandroidapp"
+    test_package: "com.feri.redmedalertandroidapp.test"
+    test_runner_class: "androidx.test.runner.AndroidJUnitRunner"
+  }
+  instrumentation_args {
+    args_map {
+      key: "additionalTestOutputDir"
+      value: "/sdcard/Android/media/com.feri.redmedalertandroidapp/additional_test_output"
+    }
+    args_map {
+      key: "class"
+      value: "com.feri.redmedalertandroidapp.data.integrationTest.LocalDataIntegrationTest"
+    }
+  }
+}
+am_instrument_timeout: 31536000
+
+INFO: No installables found in test fixture. Nothing to install.
+INFO: Installing [C:\projects\RedMedAlertAndroidApp\app\build\intermediates\apk\debug\app-debug.apk] on device emulator-5554.
+INFO: Installing [C:\projects\RedMedAlertAndroidApp\app\build\intermediates\apk\androidTest\debug\app-debug-androidTest.apk] on device emulator-5554.
+INFO: Start logcat streaming.
+INFO: Running Android Instrumentation driver.
+INFO: Stop logcat streaming.
+INFO: Uninstalling com.feri.redmedalertandroidapp for device emulator-5554.
+INFO: Uninstalling com.feri.redmedalertandroidapp.test for device emulator-5554.
+INFO: Execute com.feri.redmedalertandroidapp.data.integrationTest.LocalDataIntegrationTest.testClearData: PASSED
+SEVERE: Execute com.feri.redmedalertandroidapp.data.integrationTest.LocalDataIntegrationTest.testLocalDataStorage: FAILED
+java.util.concurrent.RejectedExecutionException: java.util.concurrent.RejectedExecutionException: Task com.feri.redmedalertandroidapp.data.DataRepository$$ExternalSyntheticLambda1@71d5afa rejected from java.util.concurrent.ThreadPoolExecutor@83a0925[Terminated, pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 6]
+at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:2082)
+at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:842)
+at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:1374)
+at com.feri.redmedalertandroidapp.data.DataRepository.clearAllData(DataRepository.java:92)
+at com.feri.redmedalertandroidapp.data.integrationTest.LocalDataIntegrationTest.cleanup(LocalDataIntegrationTest.java:42)
+
+java.util.concurrent.RejectedExecutionException: Task com.feri.redmedalertandroidapp.data.DataRepository$$ExternalSyntheticLambda1@71d5afa rejected from java.util.concurrent.ThreadPoolExecutor@83a0925[Terminated, pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 6]
+at java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:2082)
+at java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:842)
+at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:1374)
+at com.feri.redmedalertandroidapp.data.DataRepository.clearAllData(DataRepository.java:92)
+at com.feri.redmedalertandroidapp.data.integrationTest.LocalDataIntegrationTest.cleanup(LocalDataIntegrationTest.java:42)

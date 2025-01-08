@@ -3,9 +3,11 @@ package com.feri.redmedalertandroidapp.api.service;
 import android.content.Context;
 import android.util.Log;
 import androidx.room.Room;
+
+import com.feri.redmedalertandroidapp.api.database.HealthDatabase;
 import com.feri.redmedalertandroidapp.api.model.HealthDataEntity;
 import com.feri.redmedalertandroidapp.api.config.ApiClient;
-import com.feri.redmedalertandroidapp.api.database.AppDatabase;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,13 +17,13 @@ public class DatabaseHelper {
 
     private static final String TAG = "DatabaseHelper";
     private static DatabaseHelper instance;
-    private final AppDatabase database;
+    private final HealthDatabase database;
     private final Context context;
 
     private DatabaseHelper(Context context) {
         this.context = context.getApplicationContext();
         database = Room.databaseBuilder(context,
-                        AppDatabase.class, "redmedalert-db")
+                        HealthDatabase.class, "redmedalert-db")
                 .fallbackToDestructiveMigration()
                 .build();
     }

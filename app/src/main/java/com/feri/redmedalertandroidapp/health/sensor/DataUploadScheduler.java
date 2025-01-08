@@ -7,6 +7,9 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 import androidx.work.Constraints;
+import androidx.work.*;
+import androidx.work.Data;
+import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
@@ -17,6 +20,9 @@ import com.feri.redmedalertandroidapp.api.config.ApiClient;
 import com.feri.redmedalertandroidapp.api.model.HealthDataEntity;
 import com.feri.redmedalertandroidapp.api.service.ApiCallback;
 import com.feri.redmedalertandroidapp.health.HealthDataWorker;
+import com.feri.redmedalertandroidapp.health.monitor.BatteryMonitor;
+import com.feri.redmedalertandroidapp.health.util.DataCompressor;
+import com.feri.redmedalertandroidapp.health.util.DataValidator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,19 +30,51 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class DataUploadScheduler {
+public class DataUploadScheduler implements BatteryMonitor.BatteryCallback{
 
     private static final String TAG = "DataUploadScheduler";
+
+    // Stare sistem
     private final Context context;
     private final SensorDataCache dataCache;
     private final ApiClient apiClient;
     private final WorkManager workManager;
+    private final BatteryMonitor batteryMonitor;
+    private boolean isInAlertMode = false;
+    private boolean isLteEnabled = false;
+    private boolean isBatteryCritical = false;
 
-    // Constante pentru planificare
-    private static final long NORMAL_INTERVAL = 15; // minute
-    private static final long URGENT_INTERVAL = 1; // minute
+    // Configurare intervale măsurare normale (secunde)
+    private static final Map<String, Integer> NORMAL_INTERVALS = Map.of(
+            "heart_rate", 60,          // 1 minut
+            "blood_oxygen", 300,       // 5 minute
+            "bia", 300,               // 5 minute
+            "blood_pressure", 900,     // 15 minute
+            "body_temperature", 900,   // 15 minute
+            "accelerometer", 10,       // 10 secunde
+            "gyroscope", 10,          // 10 secunde
+            "fall_detection", 10,      // 10 secunde
+            "stress", 900,            // 15 minute
+            "sleep", 300              // 5 minute
+    );
+
+    // Configurare intervale măsurare alertă (secunde)
+    private static final Map<String, Integer> ALERT_INTERVALS = Map.of(
+            "heart_rate", 30,         // 30 secunde
+            "blood_oxygen", 30,
+            "bia", 30,
+            "blood_pressure", 30,
+            "body_temperature", 30,
+            "accelerometer", 1,
+            "gyroscope", 1,
+            "fall_detection", 1,
+            "stress", 60,
+            "sleep", 60
+    );
+
     private static final int MAX_RETRY_ATTEMPTS = 3;
-    private static final long RETRY_DELAY = 5000; // milisecunde
+    private static final long RETRY_DELAY = 5000;
+    private static final long RETURN_TO_NORMAL_DELAY = 15 * 60; // 15 minute în secunde
 
     public interface UploadCallback {
         void onUploadSuccess(int count);
@@ -49,34 +87,97 @@ public class DataUploadScheduler {
         this.dataCache = dataCache;
         this.apiClient = ApiClient.getInstance(context);
         this.workManager = WorkManager.getInstance(context);
-        setupPeriodicUpload();
+        this.batteryMonitor = new BatteryMonitor(context);
+        this.batteryMonitor.setBatteryCallback(this);
+        setupInitialSchedule();
     }
 
-    private void setupPeriodicUpload() {
-        Constraints constraints = new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .setRequiresBatteryNotLow(true)
-                .build();
-
-        PeriodicWorkRequest periodicUpload =
-                new PeriodicWorkRequest.Builder(HealthDataWorker.class, NORMAL_INTERVAL, TimeUnit.MINUTES)
-                        .setConstraints(constraints)
-                        .build();
-
-        workManager.enqueue(periodicUpload);
+    @Override
+    public void onBatteryCritical() {
+        isBatteryCritical = true;
+        if (isLteEnabled) {
+            enableLteMode(false);
+        }
+        updateConnectivityStrategy();
     }
 
-    public void scheduleUrgentUpload() {
-        Constraints constraints = new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build();
+    @Override
+    public void onBatteryLow() {
+        if (isLteEnabled && !isInAlertMode) {
+            enableLteMode(false);
+        }
+    }
 
-        WorkRequest uploadWorkRequest =
-                new OneTimeWorkRequest.Builder(HealthDataWorker.class)
-                        .setConstraints(constraints)
-                        .build();
+    @Override
+    public void onBatteryNormal() {
+        isBatteryCritical = false;
+        updateConnectivityStrategy();
+    }
 
-        workManager.enqueue(uploadWorkRequest);
+    private void setupInitialSchedule() {
+        cancelAllUploads();
+        scheduleUploadsForAllSensors(false);
+    }
+
+    public void enableLteMode(boolean enabled) {
+        if (isBatteryCritical && enabled) {
+            Log.w(TAG, "Cannot enable LTE mode when battery is critical");
+            return;
+        }
+        this.isLteEnabled = enabled;
+        updateConnectivityStrategy();
+    }
+
+    private void updateConnectivityStrategy() {
+        cancelAllUploads();
+        scheduleUploadsForAllSensors(isInAlertMode);
+    }
+
+    private void scheduleUploadsForAllSensors(boolean alertMode) {
+
+        // Verificare baterie înainte de planificare
+        batteryMonitor.checkBatteryStatus();
+
+        Constraints.Builder constraintsBuilder = new Constraints.Builder()
+                .setRequiredNetworkType(isLteEnabled ? NetworkType.CONNECTED : NetworkType.CONNECTED)
+                .setRequiresBatteryNotLow(!alertMode && !isLteEnabled);
+
+        Map<String, Integer> intervals = alertMode ? ALERT_INTERVALS : NORMAL_INTERVALS;
+
+        for (Map.Entry<String, Integer> entry : intervals.entrySet()) {
+            // Ajustare interval bazată pe starea bateriei
+            int adjustedInterval = isBatteryCritical && !alertMode ?
+                    entry.getValue() * 2 : entry.getValue();
+
+            Data inputData = new Data.Builder()
+                    .putString("sensor_type", entry.getKey())
+                    .putBoolean("is_lte", isLteEnabled)
+                    .putBoolean("is_alert_mode", alertMode)
+                    .build();
+
+            PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(
+                    HealthDataWorker.class,
+                    adjustedInterval,
+                    TimeUnit.SECONDS)
+                    .setConstraints(constraintsBuilder.build())
+                    .setInputData(inputData)
+                    .build();
+
+            workManager.enqueueUniquePeriodicWork(
+                    "sensor_" + entry.getKey(),
+                    ExistingPeriodicWorkPolicy.UPDATE,
+                    workRequest
+            );
+        }
+    }
+
+    public void setAlertMode(boolean enabled) {
+        if (this.isInAlertMode == enabled) return;
+
+        this.isInAlertMode = enabled;
+        Log.d(TAG, "Alert mode changed to: " + enabled);
+
+        updateConnectivityStrategy();
     }
 
     public void uploadCachedData(UploadCallback callback) {
@@ -92,7 +193,6 @@ public class DataUploadScheduler {
                     callback.onNoDataToUpload();
                     return;
                 }
-
                 uploadDataBatch(data, callback, 0);
             }
 
@@ -103,25 +203,44 @@ public class DataUploadScheduler {
         });
     }
 
+
+
     private void uploadDataBatch(List<HealthDataEntity> data, UploadCallback callback, int retryAttempt) {
         if (retryAttempt >= MAX_RETRY_ATTEMPTS) {
             callback.onUploadError("Max retry attempts reached");
             return;
         }
 
-        apiClient.uploadHealthData(convertToApiFormat(data), new ApiCallback() {
+        // Validare date
+        List<HealthDataEntity> validData = DataValidator.validateAndFilter(data);
+        if (validData.isEmpty()) {
+            callback.onNoDataToUpload();
+            return;
+        }
+
+        // Compresie date
+        byte[] compressedData = DataCompressor.compressData(validData);
+        if (compressedData == null) {
+            callback.onUploadError("Data compression failed");
+            return;
+        }
+
+        // Upload date comprimate
+        apiClient.uploadHealthData(convertToApiFormat(validData), new ApiCallback() {
             @Override
             public void onSuccess() {
-                markDataAsUploaded(data);
-                callback.onUploadSuccess(data.size());
+                markDataAsUploaded(validData);
+                callback.onUploadSuccess(validData.size());
+
+                // Verificare baterie după upload
+                batteryMonitor.checkBatteryStatus();
             }
 
             @Override
             public void onError(String error) {
                 if (retryAttempt < MAX_RETRY_ATTEMPTS) {
-                    // Reîncearcă după un delay
-                    new android.os.Handler().postDelayed(() ->
-                                    uploadDataBatch(data, callback, retryAttempt + 1),
+                    new android.os.Handler().postDelayed(
+                            () -> uploadDataBatch(data, callback, retryAttempt + 1),
                             RETRY_DELAY
                     );
                 } else {
@@ -142,19 +261,14 @@ public class DataUploadScheduler {
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager == null) {
-            return false;
-        }
+        if (connectivityManager == null) return false;
 
         android.net.Network network = connectivityManager.getActiveNetwork();
+        if (network == null) return false;
 
-        if (network == null) {
-            return false;
-        }
         NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(network);
-        if (capabilities == null) {
-            return false;
-        }
+        if (capabilities == null) return false;
+
         return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET);

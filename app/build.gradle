@@ -16,6 +16,11 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // Enable database testing
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
+
     // Adăugăm această configurare pentru teste
     testOptions {
         unitTests {
@@ -60,6 +65,7 @@ dependencies {
 
     // Dependency Injection
     implementation 'com.google.dagger:hilt-android:2.50'
+    implementation libs.junit.junit
     annotationProcessor 'com.google.dagger:hilt-compiler:2.50'
 
     // Background Work
@@ -71,6 +77,12 @@ dependencies {
     androidTestImplementation 'androidx.test:rules:1.5.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    testImplementation 'org.robolectric:robolectric:4.9'
+    testImplementation 'org.mockito:mockito-core:5.8.0'
+    testImplementation 'org.mockito:mockito-inline:5.8.0'
+    testImplementation 'androidx.test:core:1.5.0'
+    androidTestImplementation 'org.mockito:mockito-android:5.8.0'
+    androidTestImplementation 'androidx.room:room-testing:2.6.1'
 
     //cache
     def room_version = "2.6.1"
@@ -87,4 +99,6 @@ dependencies {
 
     // ViewPager2
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
+
+    implementation 'com.jakewharton.timber:timber:5.0.1'
 }

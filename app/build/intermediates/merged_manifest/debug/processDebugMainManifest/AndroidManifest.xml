@@ -23,6 +23,7 @@
         android:name="android.hardware.sensor.gyroscope"
         android:required="true" />
 
+    <uses-permission android:name="android.permission.BODY_SENSORS_BACKGROUND" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <queries>

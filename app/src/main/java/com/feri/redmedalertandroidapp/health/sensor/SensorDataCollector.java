@@ -52,7 +52,7 @@ public class SensorDataCollector implements SensorEventListener {
         registerSensor(Sensor.TYPE_GRAVITY, "gravity");
         registerSensor(Sensor.TYPE_LINEAR_ACCELERATION, "linear_acceleration");
         registerSensor(Sensor.TYPE_ROTATION_VECTOR, "rotation");
-        registerSensor(Sensor.TYPE_ORIENTATION, "orientation");
+        registerSensor(Sensor.TYPE_GAME_ROTATION_VECTOR, "orientation");
         registerSensor(Sensor.TYPE_MAGNETIC_FIELD, "magnetic_field");
 
         // Senzori de mediu și poziție
@@ -104,7 +104,7 @@ public class SensorDataCollector implements SensorEventListener {
             case Sensor.TYPE_GRAVITY -> "gravity";
             case Sensor.TYPE_LINEAR_ACCELERATION -> "linear_acceleration";
             case Sensor.TYPE_ROTATION_VECTOR -> "rotation";
-            case Sensor.TYPE_ORIENTATION -> "orientation";
+            case Sensor.TYPE_GAME_ROTATION_VECTOR -> "orientation";
             case Sensor.TYPE_MAGNETIC_FIELD -> "magnetic_field";
             case Sensor.TYPE_RELATIVE_HUMIDITY -> "humidity";
             case Sensor.TYPE_LIGHT -> "light";
