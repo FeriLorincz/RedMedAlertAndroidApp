@@ -4,7 +4,7 @@
             "outputFile": "com.feri.redmedalertandroidapp-mergeDebugResources-36:/values-small-v4/values-small-v4.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\PC\\.gradle\\caches\\transforms-4\\a950811c61b652c1b56248c8809a2c02\\transformed\\material-1.11.0\\res\\values-small-v4\\values-small-v4.xml",
+                    "source": "C:\\Users\\PC\\.gradle\\caches\\transforms-4\\dcbb5cc3b4e5f0e82d8a6e3ade00a695\\transformed\\material-1.11.0\\res\\values-small-v4\\values-small-v4.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",

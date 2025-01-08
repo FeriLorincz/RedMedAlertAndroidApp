@@ -1,6 +1,11 @@
-com.feri.redmedalertandroidapp.test.app-annotation-experimental-1.3.1-0 C:\Users\PC\.gradle\caches\transforms-4\be35cbe14ff9ab92f47a581051391eb7\transformed\annotation-experimental-1.3.1\res
-com.feri.redmedalertandroidapp.test.app-core-1.5.0-1 C:\Users\PC\.gradle\caches\transforms-4\cee746edace11f49ac220f9165419377\transformed\core-1.5.0\res
-com.feri.redmedalertandroidapp.test.app-androidTest-2 C:\projects\RedMedAlertAndroidApp\app\build\generated\res\resValues\androidTest\debug
-com.feri.redmedalertandroidapp.test.app-mergeDebugAndroidTestResources-3 C:\projects\RedMedAlertAndroidApp\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
-com.feri.redmedalertandroidapp.test.app-mergeDebugAndroidTestResources-4 C:\projects\RedMedAlertAndroidApp\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
-com.feri.redmedalertandroidapp.test.app-debugAndroidTest-5 C:\projects\RedMedAlertAndroidApp\app\build\intermediates\merged_res\debugAndroidTest\mergeDebugAndroidTestResources
+com.feri.redmedalertandroidapp.test.app-room-testing-2.6.1-0 C:\Users\PC\.gradle\caches\transforms-4\0bf6a26380cb0a48a42bc7a34173db0a\transformed\room-testing-2.6.1\res
+com.feri.redmedalertandroidapp.test.app-sqlite-2.4.0-1 C:\Users\PC\.gradle\caches\transforms-4\54bc8f6fafb2e2c4d477075c76757ef2\transformed\sqlite-2.4.0\res
+com.feri.redmedalertandroidapp.test.app-core-runtime-2.2.0-2 C:\Users\PC\.gradle\caches\transforms-4\6aeeb31767ab7b89d4244d07d5c5a8bc\transformed\core-runtime-2.2.0\res
+com.feri.redmedalertandroidapp.test.app-sqlite-framework-2.4.0-3 C:\Users\PC\.gradle\caches\transforms-4\6d4d47ca6806c187c5298e6a4cf0740d\transformed\sqlite-framework-2.4.0\res
+com.feri.redmedalertandroidapp.test.app-annotation-experimental-1.3.1-4 C:\Users\PC\.gradle\caches\transforms-4\97787c1b71272b1d55af3dae36064684\transformed\annotation-experimental-1.3.1\res
+com.feri.redmedalertandroidapp.test.app-room-runtime-2.6.1-5 C:\Users\PC\.gradle\caches\transforms-4\cb7804a196c60e5b8f37cea99838e1dc\transformed\room-runtime-2.6.1\res
+com.feri.redmedalertandroidapp.test.app-core-1.5.0-6 C:\Users\PC\.gradle\caches\transforms-4\fcf85e69c6840c57cf633a551fc8724a\transformed\core-1.5.0\res
+com.feri.redmedalertandroidapp.test.app-androidTest-7 C:\projects\RedMedAlertAndroidApp\app\build\generated\res\resValues\androidTest\debug
+com.feri.redmedalertandroidapp.test.app-mergeDebugAndroidTestResources-8 C:\projects\RedMedAlertAndroidApp\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
+com.feri.redmedalertandroidapp.test.app-mergeDebugAndroidTestResources-9 C:\projects\RedMedAlertAndroidApp\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
+com.feri.redmedalertandroidapp.test.app-debugAndroidTest-10 C:\projects\RedMedAlertAndroidApp\app\build\intermediates\merged_res\debugAndroidTest\mergeDebugAndroidTestResources

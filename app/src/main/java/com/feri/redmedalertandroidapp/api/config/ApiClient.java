@@ -8,6 +8,7 @@ import com.feri.redmedalertandroidapp.api.model.HealthDataPayload;
 import com.feri.redmedalertandroidapp.api.service.ApiCallback;
 import com.feri.redmedalertandroidapp.api.service.HealthDataApiService;
 import com.feri.redmedalertandroidapp.api.validator.HealthDataValidator;
+import com.feri.redmedalertandroidapp.network.SensorDataApi;
 import com.samsung.android.sdk.healthdata.BuildConfig;
 import com.feri.redmedalertandroidapp.notification.NotificationService;
 import android.annotation.SuppressLint;
@@ -180,5 +181,9 @@ public class ApiClient {
     public static void resetInstance() {
         instance = null;
         retrofit = null;
+    }
+
+    public static synchronized SensorDataApi createSensorDataApi() {
+        return getClient().create(SensorDataApi.class);
     }
 }

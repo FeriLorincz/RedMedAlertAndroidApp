@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.room.EntityInsertionAdapter;
 import androidx.room.RoomDatabase;
 import androidx.room.RoomSQLiteQuery;
+import androidx.room.SharedSQLiteStatement;
 import androidx.room.util.CursorUtil;
 import androidx.room.util.DBUtil;
 import androidx.room.util.StringUtil;
@@ -27,6 +28,8 @@ public final class HealthDataDao_Impl implements HealthDataDao {
   private final RoomDatabase __db;
 
   private final EntityInsertionAdapter<HealthDataEntity> __insertionAdapterOfHealthDataEntity;
+
+  private final SharedSQLiteStatement __preparedStmtOfDeleteOldData;
 
   public HealthDataDao_Impl(@NonNull final RoomDatabase __db) {
     this.__db = __db;
@@ -52,6 +55,14 @@ public final class HealthDataDao_Impl implements HealthDataDao {
         statement.bindLong(5, _tmp);
       }
     };
+    this.__preparedStmtOfDeleteOldData = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "DELETE FROM health_data WHERE timestamp < ?";
+        return _query;
+      }
+    };
   }
 
   @Override
@@ -63,6 +74,25 @@ public final class HealthDataDao_Impl implements HealthDataDao {
       __db.setTransactionSuccessful();
     } finally {
       __db.endTransaction();
+    }
+  }
+
+  @Override
+  public void deleteOldData(final long cutoffTime) {
+    __db.assertNotSuspendingTransaction();
+    final SupportSQLiteStatement _stmt = __preparedStmtOfDeleteOldData.acquire();
+    int _argIndex = 1;
+    _stmt.bindLong(_argIndex, cutoffTime);
+    try {
+      __db.beginTransaction();
+      try {
+        _stmt.executeUpdateDelete();
+        __db.setTransactionSuccessful();
+      } finally {
+        __db.endTransaction();
+      }
+    } finally {
+      __preparedStmtOfDeleteOldData.release(_stmt);
     }
   }
 

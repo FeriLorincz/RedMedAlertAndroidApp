@@ -19,4 +19,7 @@ public interface HealthDataDao {
 
     @Query("UPDATE health_data SET uploaded = 1 WHERE id IN (:ids)")
     void markAsUploaded(List<Long> ids);
+
+    @Query("DELETE FROM health_data WHERE timestamp < :cutoffTime")
+    void deleteOldData(long cutoffTime);
 }
