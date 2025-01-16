@@ -1,5 +1,6 @@
 package com.feri.redmedalertandroidapp.data.model;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
@@ -21,6 +22,7 @@ public class SensorDataEntity {
     private long timestamp;
     private boolean isAnomalous;
     private String additionalInfo;  // JSON pentru date extra
+    @ColumnInfo(name = "isSynced")
     private boolean isSynced;       // Flag pentru status sincronizare
     private int uploadAttempts;     // Număr încercări upload
 
