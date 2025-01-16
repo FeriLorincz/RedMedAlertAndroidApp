@@ -1,6 +1,7 @@
 package com.feri.redmedalertandroidapp.data.upload;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,6 +23,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -66,9 +69,16 @@ public class DatabaseUploaderTest {
         );
 
         // Setup repository și API mocks
-        when(mockRepository.getUnsyncedData()).thenReturn(testData);
+        Future<List<SensorDataEntity>> futureData = CompletableFuture.completedFuture(testData);
+        when(mockRepository.getUnsyncedData()).thenReturn(futureData);
+
         when(mockApi.uploadSensorData(any())).thenReturn(mockCall);
         when(mockCall.execute()).thenReturn(Response.success(null));
+
+        // Setup mock pentru operațiile asincrone
+        Future<Void> futureVoid = CompletableFuture.completedFuture(null);
+        when(mockRepository.markAsSynced(anyList())).thenReturn(futureVoid);
+        when(mockRepository.incrementUploadAttempts(anyList())).thenReturn(futureVoid);
 
         // Inițializare uploader cu API mock
         uploader = new DatabaseUploader(mockContext, mockRepository) {
@@ -88,21 +98,30 @@ public class DatabaseUploaderTest {
 
     @Test
     public void uploadPendingData_whenNoData_shouldSkipUpload() {
-        when(mockRepository.getUnsyncedData()).thenReturn(Arrays.asList());
+        Future<List<SensorDataEntity>> emptyFuture = CompletableFuture.completedFuture(Arrays.asList());
+        when(mockRepository.getUnsyncedData()).thenReturn(emptyFuture);
         uploader.uploadPendingData();
         verify(mockApi, never()).uploadSensorData(any());
     }
 
     @Test
     public void uploadPendingData_whenSuccess_shouldMarkAsSynced() throws Exception {
+        Future<Void> successFuture = CompletableFuture.completedFuture(null);
+        when(mockRepository.markAsSynced(Arrays.asList(1L, 2L))).thenReturn(successFuture);
+
         uploader.uploadPendingData();
+
         verify(mockRepository).markAsSynced(Arrays.asList(1L, 2L));
     }
 
     @Test
     public void uploadPendingData_whenError_shouldIncrementAttempts() throws Exception {
         when(mockCall.execute()).thenThrow(new RuntimeException("Network error"));
+        Future<Void> errorFuture = CompletableFuture.completedFuture(null);
+        when(mockRepository.incrementUploadAttempts(Arrays.asList(1L, 2L))).thenReturn(errorFuture);
+
         uploader.uploadPendingData();
+
         verify(mockRepository).incrementUploadAttempts(Arrays.asList(1L, 2L));
     }
 

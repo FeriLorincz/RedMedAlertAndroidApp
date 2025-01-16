@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Future;
 
 import static org.junit.Assert.*;
 
@@ -32,11 +33,11 @@ public class NetworkSyncIntegrationTest {
     public void setup() {
         context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         repository = DataRepository.getInstance(context);
-        repository.clearAllData();
 
         try {
+            repository.clearAllData().get(5, TimeUnit.SECONDS);
             Thread.sleep(1000);
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -47,9 +48,9 @@ public class NetworkSyncIntegrationTest {
     private DatabaseUploader createTestUploader() {
         return new DatabaseUploader(context, repository) {
             @Override
-            public void uploadPendingData() {
+            public boolean uploadPendingData() {
                 try {
-                    super.uploadPendingData();
+                    return super.uploadPendingData();
                 } finally {
                     syncLatch.countDown();
                 }
@@ -60,18 +61,18 @@ public class NetworkSyncIntegrationTest {
     @After
     public void cleanup() {
         if (repository != null) {
-            repository.clearAllData();
             try {
+                repository.clearAllData().get(5, TimeUnit.SECONDS);
                 Thread.sleep(1000);
-            } catch (InterruptedException e) {
+                repository.shutdown().get(5, TimeUnit.SECONDS);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            repository.shutdown();
         }
     }
 
     @Test
-    public void testOfflineCapabilities() throws InterruptedException {
+    public void testOfflineCapabilities() throws Exception {
         // Create and save test data
         SensorDataEntity testData = new SensorDataEntity(
                 "test-device",
@@ -82,20 +83,29 @@ public class NetworkSyncIntegrationTest {
                 System.currentTimeMillis()
         );
 
-        long insertedId = repository.saveSensorData(testData);
+        Future<Long> insertFuture = repository.saveSensorData(testData);
+        long insertedId = insertFuture.get(5, TimeUnit.SECONDS);
         assertTrue("Data should be saved successfully", insertedId > 0);
         Thread.sleep(1000);
 
         // Verify initial state
-        List<SensorDataEntity> initialData = repository.getUnsyncedData();
+        Future<List<SensorDataEntity>> initialDataFuture = repository.getUnsyncedData();
+        List<SensorDataEntity> initialData = initialDataFuture.get(5, TimeUnit.SECONDS);
         assertEquals("Should have one unsynced record", 1, initialData.size());
+
+        // Attempt upload with no network
+//        boolean uploadResult = uploader.uploadPendingData();
+//        assertFalse("Upload should fail without network", uploadResult);
+//        Thread.sleep(1000);
+
 
         // Attempt upload with no network
         uploader.uploadPendingData();
         Thread.sleep(1000);
 
         // Verify data remains unsynced
-        List<SensorDataEntity> finalData = repository.getUnsyncedData();
+        Future<List<SensorDataEntity>> finalDataFuture = repository.getUnsyncedData();
+        List<SensorDataEntity> finalData = finalDataFuture.get(5, TimeUnit.SECONDS);
         assertEquals("Should still have one unsynced record", 1, finalData.size());
     }
 }
