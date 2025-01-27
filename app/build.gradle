@@ -28,11 +28,6 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -53,6 +48,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     // Samsung Health SDK
+    //implementation(name: 'samsung-health-data-v1.5.1', ext: 'aar')
     implementation fileTree(dir: 'libs', include: ['*.aar', '*.jar'])
 
     // Networking, Retrofit
@@ -93,7 +89,7 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
 
-    // Coroutines
+    // Coroutines pentru operații asincrone
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
 

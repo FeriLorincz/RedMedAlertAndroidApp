@@ -7,11 +7,37 @@ import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+<<<<<<< HEAD
+=======
 
+>>>>>>> origin/master
 import timber.log.Timber;
 
 public class NetworkStateMonitor {
 
+<<<<<<< HEAD
+    protected final ConnectivityManager connectivityManager;
+    private final ConnectivityManager.NetworkCallback networkCallback;
+    protected NetworkStateCallback callback;
+    private boolean isRegistered = false;
+    private boolean lastKnownState = false;
+
+    // Factory method pentru teste
+    @VisibleForTesting
+    protected ConnectivityManager createConnectivityManager(Context context) {
+        return (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    }
+
+    public NetworkStateMonitor(Context context) {
+        this.connectivityManager = createConnectivityManager(context);
+        this.networkCallback = createNetworkCallback();
+    }
+
+    // Extragere crearea callback-ului într-o metodă separată pentru teste
+    @VisibleForTesting
+    protected ConnectivityManager.NetworkCallback createNetworkCallback() {
+        return new ConnectivityManager.NetworkCallback() {
+=======
     private final ConnectivityManager connectivityManager;
     private final ConnectivityManager.NetworkCallback networkCallback;
     private NetworkStateCallback callback;
@@ -25,6 +51,7 @@ public class NetworkStateMonitor {
     public NetworkStateMonitor(Context context) {
         connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         networkCallback = new ConnectivityManager.NetworkCallback() {
+>>>>>>> origin/master
             @Override
             public void onAvailable(@NonNull Network network) {
                 Timber.d("Network became available");
@@ -34,8 +61,12 @@ public class NetworkStateMonitor {
             @Override
             public void onLost(@NonNull Network network) {
                 Timber.d("Network connection lost");
+<<<<<<< HEAD
+                lastKnownState = true;
+=======
                 // Ensure immediate notification
                 lastKnownState = true; // Reset state to ensure notification
+>>>>>>> origin/master
                 updateAndNotifyNetworkState(false);
             }
 
@@ -49,7 +80,11 @@ public class NetworkStateMonitor {
         };
     }
 
+<<<<<<< HEAD
+    protected synchronized void updateAndNotifyNetworkState(boolean newState) {
+=======
     private synchronized void updateAndNotifyNetworkState(boolean newState) {
+>>>>>>> origin/master
         lastKnownState = newState;
         notifyNetworkState(newState);
         Timber.d("Network state updated: %s", newState);
@@ -69,7 +104,10 @@ public class NetworkStateMonitor {
             connectivityManager.registerNetworkCallback(request, networkCallback);
             isRegistered = true;
 
+<<<<<<< HEAD
+=======
             // Notify initial state
+>>>>>>> origin/master
             boolean isInitiallyConnected = isNetworkAvailable();
             updateAndNotifyNetworkState(isInitiallyConnected);
 
@@ -83,7 +121,10 @@ public class NetworkStateMonitor {
         if (!isRegistered) {
             return;
         }
+<<<<<<< HEAD
+=======
 
+>>>>>>> origin/master
         try {
             connectivityManager.unregisterNetworkCallback(networkCallback);
             isRegistered = false;
@@ -107,13 +148,20 @@ public class NetworkStateMonitor {
                 capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
     }
 
+<<<<<<< HEAD
+    protected void notifyNetworkState(boolean isConnected) {
+=======
     private void notifyNetworkState(boolean isConnected) {
+>>>>>>> origin/master
         if (callback != null) {
             callback.onNetworkStateChanged(isConnected);
         }
     }
 
+<<<<<<< HEAD
+=======
     // Add this method for testing purposes
+>>>>>>> origin/master
     @VisibleForTesting
     protected void forceNetworkStateUpdate(boolean state) {
         updateAndNotifyNetworkState(state);

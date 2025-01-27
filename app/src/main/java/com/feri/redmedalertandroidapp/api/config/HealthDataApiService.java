@@ -13,3 +13,4 @@ public interface HealthDataApiService {
     @POST("api/health-data")
     Call<Void> sendHealthData(@Body HealthDataPayload payload);
 }
+

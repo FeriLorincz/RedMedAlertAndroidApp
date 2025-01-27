@@ -1,9 +1,11 @@
 package com.feri.redmedalertandroidapp.api.config;
 
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
+
 
 import com.feri.redmedalertandroidapp.api.model.HealthDataPayload;
 import com.feri.redmedalertandroidapp.api.service.ApiCallback;
@@ -44,6 +46,9 @@ public class ApiClient {
         notificationService = new NotificationService(context);
     }
 
+    public static String getBaseUrl() {
+        return BASE_URL;
+    }
     // Metodă pentru obținerea instanței singleton
     public static synchronized ApiClient getInstance(Context context) {
         if (instance == null) {
@@ -91,9 +96,7 @@ public class ApiClient {
     }
 
     // Metodă completă pentru upload date cu callback
-    // Metodă completă cu callback
     public void uploadHealthData(Map<String, Double> data, ApiCallback callback) {
-
         if (!HealthDataValidator.isValidData(data)) {
             if (callback != null) {
                 callback.onError("Invalid data values");

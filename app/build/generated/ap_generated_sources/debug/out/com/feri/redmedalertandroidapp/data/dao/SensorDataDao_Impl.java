@@ -35,6 +35,8 @@ public final class SensorDataDao_Impl implements SensorDataDao {
 
   private final SharedSQLiteStatement __preparedStmtOfDeleteOldSyncedData;
 
+  private final SharedSQLiteStatement __preparedStmtOfInsertRaw;
+
   public SensorDataDao_Impl(@NonNull final RoomDatabase __db) {
     this.__db = __db;
     this.__insertionAdapterOfSensorDataEntity = new EntityInsertionAdapter<SensorDataEntity>(__db) {
@@ -146,6 +148,14 @@ public final class SensorDataDao_Impl implements SensorDataDao {
         return _query;
       }
     };
+    this.__preparedStmtOfInsertRaw = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "INSERT INTO sensor_data (deviceId, userId, sensorType, value, unit, timestamp, isSynced, uploadAttempts) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        return _query;
+      }
+    };
   }
 
   @Override
@@ -202,6 +212,59 @@ public final class SensorDataDao_Impl implements SensorDataDao {
       }
     } finally {
       __preparedStmtOfDeleteOldSyncedData.release(_stmt);
+    }
+  }
+
+  @Override
+  public Long insertRaw(final String deviceId, final String userId, final String sensorType,
+      final double value, final String unit, final long timestamp, final boolean isSynced,
+      final int uploadAttempts) {
+    __db.assertNotSuspendingTransaction();
+    final SupportSQLiteStatement _stmt = __preparedStmtOfInsertRaw.acquire();
+    int _argIndex = 1;
+    if (deviceId == null) {
+      _stmt.bindNull(_argIndex);
+    } else {
+      _stmt.bindString(_argIndex, deviceId);
+    }
+    _argIndex = 2;
+    if (userId == null) {
+      _stmt.bindNull(_argIndex);
+    } else {
+      _stmt.bindString(_argIndex, userId);
+    }
+    _argIndex = 3;
+    if (sensorType == null) {
+      _stmt.bindNull(_argIndex);
+    } else {
+      _stmt.bindString(_argIndex, sensorType);
+    }
+    _argIndex = 4;
+    _stmt.bindDouble(_argIndex, value);
+    _argIndex = 5;
+    if (unit == null) {
+      _stmt.bindNull(_argIndex);
+    } else {
+      _stmt.bindString(_argIndex, unit);
+    }
+    _argIndex = 6;
+    _stmt.bindLong(_argIndex, timestamp);
+    _argIndex = 7;
+    final int _tmp = isSynced ? 1 : 0;
+    _stmt.bindLong(_argIndex, _tmp);
+    _argIndex = 8;
+    _stmt.bindLong(_argIndex, uploadAttempts);
+    try {
+      __db.beginTransaction();
+      try {
+        final Long _result = _stmt.executeInsert();
+        __db.setTransactionSuccessful();
+        return _result;
+      } finally {
+        __db.endTransaction();
+      }
+    } finally {
+      __preparedStmtOfInsertRaw.release(_stmt);
     }
   }
 
@@ -406,13 +469,167 @@ public final class SensorDataDao_Impl implements SensorDataDao {
   }
 
   @Override
-  public void markAsSynced(final List<Long> ids) {
+  public int countUnsyncedById(final List<Long> ids) {
+    final StringBuilder _stringBuilder = StringUtil.newStringBuilder();
+    _stringBuilder.append("SELECT COUNT(*) FROM sensor_data WHERE id IN (");
+    final int _inputSize = ids == null ? 1 : ids.size();
+    StringUtil.appendPlaceholders(_stringBuilder, _inputSize);
+    _stringBuilder.append(") AND isSynced = 0");
+    final String _sql = _stringBuilder.toString();
+    final int _argCount = 0 + _inputSize;
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, _argCount);
+    int _argIndex = 1;
+    if (ids == null) {
+      _statement.bindNull(_argIndex);
+    } else {
+      for (Long _item : ids) {
+        if (_item == null) {
+          _statement.bindNull(_argIndex);
+        } else {
+          _statement.bindLong(_argIndex, _item);
+        }
+        _argIndex++;
+      }
+    }
+    __db.assertNotSuspendingTransaction();
+    final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+    try {
+      final int _result;
+      if (_cursor.moveToFirst()) {
+        _result = _cursor.getInt(0);
+      } else {
+        _result = 0;
+      }
+      return _result;
+    } finally {
+      _cursor.close();
+      _statement.release();
+    }
+  }
+
+  @Override
+  public List<SensorDataEntity> getByIds(final List<Long> ids) {
+    final StringBuilder _stringBuilder = StringUtil.newStringBuilder();
+    _stringBuilder.append("SELECT * FROM sensor_data WHERE id IN (");
+    final int _inputSize = ids == null ? 1 : ids.size();
+    StringUtil.appendPlaceholders(_stringBuilder, _inputSize);
+    _stringBuilder.append(")");
+    final String _sql = _stringBuilder.toString();
+    final int _argCount = 0 + _inputSize;
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, _argCount);
+    int _argIndex = 1;
+    if (ids == null) {
+      _statement.bindNull(_argIndex);
+    } else {
+      for (Long _item : ids) {
+        if (_item == null) {
+          _statement.bindNull(_argIndex);
+        } else {
+          _statement.bindLong(_argIndex, _item);
+        }
+        _argIndex++;
+      }
+    }
+    __db.assertNotSuspendingTransaction();
+    final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+    try {
+      final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
+      final int _cursorIndexOfDeviceId = CursorUtil.getColumnIndexOrThrow(_cursor, "deviceId");
+      final int _cursorIndexOfUserId = CursorUtil.getColumnIndexOrThrow(_cursor, "userId");
+      final int _cursorIndexOfSensorType = CursorUtil.getColumnIndexOrThrow(_cursor, "sensorType");
+      final int _cursorIndexOfValue = CursorUtil.getColumnIndexOrThrow(_cursor, "value");
+      final int _cursorIndexOfSecondaryValue = CursorUtil.getColumnIndexOrThrow(_cursor, "secondaryValue");
+      final int _cursorIndexOfUnit = CursorUtil.getColumnIndexOrThrow(_cursor, "unit");
+      final int _cursorIndexOfTimestamp = CursorUtil.getColumnIndexOrThrow(_cursor, "timestamp");
+      final int _cursorIndexOfIsAnomalous = CursorUtil.getColumnIndexOrThrow(_cursor, "isAnomalous");
+      final int _cursorIndexOfAdditionalInfo = CursorUtil.getColumnIndexOrThrow(_cursor, "additionalInfo");
+      final int _cursorIndexOfIsSynced = CursorUtil.getColumnIndexOrThrow(_cursor, "isSynced");
+      final int _cursorIndexOfUploadAttempts = CursorUtil.getColumnIndexOrThrow(_cursor, "uploadAttempts");
+      final List<SensorDataEntity> _result = new ArrayList<SensorDataEntity>(_cursor.getCount());
+      while (_cursor.moveToNext()) {
+        final SensorDataEntity _item_1;
+        _item_1 = new SensorDataEntity();
+        final long _tmpId;
+        _tmpId = _cursor.getLong(_cursorIndexOfId);
+        _item_1.setId(_tmpId);
+        final String _tmpDeviceId;
+        if (_cursor.isNull(_cursorIndexOfDeviceId)) {
+          _tmpDeviceId = null;
+        } else {
+          _tmpDeviceId = _cursor.getString(_cursorIndexOfDeviceId);
+        }
+        _item_1.setDeviceId(_tmpDeviceId);
+        final String _tmpUserId;
+        if (_cursor.isNull(_cursorIndexOfUserId)) {
+          _tmpUserId = null;
+        } else {
+          _tmpUserId = _cursor.getString(_cursorIndexOfUserId);
+        }
+        _item_1.setUserId(_tmpUserId);
+        final String _tmpSensorType;
+        if (_cursor.isNull(_cursorIndexOfSensorType)) {
+          _tmpSensorType = null;
+        } else {
+          _tmpSensorType = _cursor.getString(_cursorIndexOfSensorType);
+        }
+        _item_1.setSensorType(_tmpSensorType);
+        final double _tmpValue;
+        _tmpValue = _cursor.getDouble(_cursorIndexOfValue);
+        _item_1.setValue(_tmpValue);
+        final Double _tmpSecondaryValue;
+        if (_cursor.isNull(_cursorIndexOfSecondaryValue)) {
+          _tmpSecondaryValue = null;
+        } else {
+          _tmpSecondaryValue = _cursor.getDouble(_cursorIndexOfSecondaryValue);
+        }
+        _item_1.setSecondaryValue(_tmpSecondaryValue);
+        final String _tmpUnit;
+        if (_cursor.isNull(_cursorIndexOfUnit)) {
+          _tmpUnit = null;
+        } else {
+          _tmpUnit = _cursor.getString(_cursorIndexOfUnit);
+        }
+        _item_1.setUnit(_tmpUnit);
+        final long _tmpTimestamp;
+        _tmpTimestamp = _cursor.getLong(_cursorIndexOfTimestamp);
+        _item_1.setTimestamp(_tmpTimestamp);
+        final boolean _tmpIsAnomalous;
+        final int _tmp;
+        _tmp = _cursor.getInt(_cursorIndexOfIsAnomalous);
+        _tmpIsAnomalous = _tmp != 0;
+        _item_1.setAnomalous(_tmpIsAnomalous);
+        final String _tmpAdditionalInfo;
+        if (_cursor.isNull(_cursorIndexOfAdditionalInfo)) {
+          _tmpAdditionalInfo = null;
+        } else {
+          _tmpAdditionalInfo = _cursor.getString(_cursorIndexOfAdditionalInfo);
+        }
+        _item_1.setAdditionalInfo(_tmpAdditionalInfo);
+        final boolean _tmpIsSynced;
+        final int _tmp_1;
+        _tmp_1 = _cursor.getInt(_cursorIndexOfIsSynced);
+        _tmpIsSynced = _tmp_1 != 0;
+        _item_1.setSynced(_tmpIsSynced);
+        final int _tmpUploadAttempts;
+        _tmpUploadAttempts = _cursor.getInt(_cursorIndexOfUploadAttempts);
+        _item_1.setUploadAttempts(_tmpUploadAttempts);
+        _result.add(_item_1);
+      }
+      return _result;
+    } finally {
+      _cursor.close();
+      _statement.release();
+    }
+  }
+
+  @Override
+  public int markAsSynced(final List<Long> ids) {
     __db.assertNotSuspendingTransaction();
     final StringBuilder _stringBuilder = StringUtil.newStringBuilder();
     _stringBuilder.append("UPDATE sensor_data SET isSynced = 1 WHERE id IN (");
     final int _inputSize = ids == null ? 1 : ids.size();
     StringUtil.appendPlaceholders(_stringBuilder, _inputSize);
-    _stringBuilder.append(")");
+    _stringBuilder.append(") AND isSynced = 0");
     final String _sql = _stringBuilder.toString();
     final SupportSQLiteStatement _stmt = __db.compileStatement(_sql);
     int _argIndex = 1;
@@ -430,8 +647,9 @@ public final class SensorDataDao_Impl implements SensorDataDao {
     }
     __db.beginTransaction();
     try {
-      _stmt.executeUpdateDelete();
+      final int _result = _stmt.executeUpdateDelete();
       __db.setTransactionSuccessful();
+      return _result;
     } finally {
       __db.endTransaction();
     }

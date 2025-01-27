@@ -22,7 +22,11 @@ public class DatabaseUploadWorker extends Worker{
     public Result doWork() {
         try {
             Timber.d("Starting scheduled database upload");
-            databaseUploader.uploadPendingData();
+            boolean uploadSuccess = databaseUploader.uploadPendingData();
+            if (!uploadSuccess) {
+                Timber.w("Upload was not successful");
+                return Result.retry();
+            }
             databaseUploader.cleanOldData();
             return Result.success();
         } catch (Exception e) {

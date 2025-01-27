@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+<<<<<<< HEAD
+=======
 
+>>>>>>> origin/master
 import timber.log.Timber;
 
 public class RetryHandler {
@@ -24,13 +27,21 @@ public class RetryHandler {
             } catch (Exception e) {
                 lastException = e;
                 attempts++;
+<<<<<<< HEAD
+                Timber.w(e, "Retry attempt %d/%d failed with error: %s",
+                        attempts, MAX_RETRIES, e.getMessage());
+=======
+>>>>>>> origin/master
 
                 if (attempts >= MAX_RETRIES) {
                     break;
                 }
 
+<<<<<<< HEAD
+=======
                 Timber.w(e, "Retry attempt %d/%d failed", attempts, MAX_RETRIES);
 
+>>>>>>> origin/master
                 try {
                     Thread.sleep(delay);
                     delay = (long) (delay * BACKOFF_MULTIPLIER);
@@ -41,7 +52,13 @@ public class RetryHandler {
             }
         }
 
+<<<<<<< HEAD
+        throw new RuntimeException("Failed after " + MAX_RETRIES +
+                " attempts. Last error: " + lastException.getMessage(),
+                lastException);
+=======
         throw new RuntimeException("Failed after " + MAX_RETRIES + " attempts", lastException);
+>>>>>>> origin/master
     }
 
     public static <T> List<List<T>> splitIntoBatches(List<T> items, int batchSize) {
