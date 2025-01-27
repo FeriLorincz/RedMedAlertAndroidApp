@@ -29,9 +29,6 @@ public class HealthDataApiManager {
         this.userId = userId;
     }
 
-
-
-
     public void sendHealthData(Map<String, Double> sensorData, ApiCallback callback) {
         HealthDataPayload payload = new HealthDataPayload(deviceId, userId, sensorData);
 
@@ -57,31 +54,4 @@ public class HealthDataApiManager {
             }
         });
     }
-
-
-
-//    public void sendHealthData(Map<String, Double> sensorData, ApiCallback callback) {
-//        HealthDataPayload payload = new HealthDataPayload(deviceId, userId, sensorData);
-//
-//        apiService.sendHealthData(authToken, payload).enqueue(new Callback<Void>() {
-//            @Override
-//            public void onResponse(Call<Void> call, Response<Void> response) {
-//                if (response.isSuccessful()) {
-//                    Log.d(TAG, "Health data sent successfully");
-//                    callback.onSuccess();
-//                } else {
-//                    String error = "Error sending health data: " + response.code();
-//                    Log.e(TAG, error);
-//                    callback.onError(error);
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Void> call, Throwable t) {
-//                String error = "Failed to send health data: " + t.getMessage();
-//                Log.e(TAG, error, t);
-//                callback.onError(error);
-//            }
-//        });
-//    }
 }

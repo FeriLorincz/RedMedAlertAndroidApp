@@ -46,7 +46,6 @@ public class HealthDataTests {
         validData.put("heart_rate", 75.0);
         validData.put("temperature", 36.6);
         validData.put("blood_oxygen", 98.0);
-
         assertTrue(HealthDataValidator.isValidData(validData));
     }
 
@@ -54,7 +53,6 @@ public class HealthDataTests {
     public void testInvalidData() {
         Map<String, Double> invalidData = new HashMap<>();
         invalidData.put("heart_rate", 250.0); // Valoare invalidă
-
         assertFalse(HealthDataValidator.isValidData(invalidData));
     }
 
@@ -62,9 +60,7 @@ public class HealthDataTests {
     public void testDataCaching() {
         Map<String, Double> testData = new HashMap<>();
         testData.put("heart_rate", 75.0);
-
         databaseHelper.cacheHealthData(testData);
-
         // Verificăm că datele au fost salvate
         List<HealthDataEntity> cachedData = databaseHelper.getUnuploadedData();
         assertFalse(cachedData.isEmpty());
@@ -75,30 +71,25 @@ public class HealthDataTests {
     public void testDataUpload() {
         Map<String, Double> testData = new HashMap<>();
         testData.put("heart_rate", 75.0);
-
         CountDownLatch latch = new CountDownLatch(1);
         final boolean[] success = {false};
-
         apiClient.uploadHealthData(testData, new ApiCallback() {
             @Override
             public void onSuccess() {
                 success[0] = true;
                 latch.countDown();
             }
-
             @Override
             public void onError(String error) {
                 success[0] = false;
                 latch.countDown();
             }
         });
-
         try {
             latch.await(5, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             fail("Test timed out");
         }
-
         assertTrue(success[0]);
     }
 }

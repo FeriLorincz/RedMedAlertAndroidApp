@@ -1,8 +1,11 @@
 package com.feri.redmedalertandroidapp.api.config;
 
+
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Base64;
 import android.util.Log;
+
 
 import com.feri.redmedalertandroidapp.api.model.HealthDataPayload;
 import com.feri.redmedalertandroidapp.api.service.ApiCallback;
@@ -43,6 +46,9 @@ public class ApiClient {
         notificationService = new NotificationService(context);
     }
 
+    public static String getBaseUrl() {
+        return BASE_URL;
+    }
     // Metodă pentru obținerea instanței singleton
     public static synchronized ApiClient getInstance(Context context) {
         if (instance == null) {
@@ -90,9 +96,7 @@ public class ApiClient {
     }
 
     // Metodă completă pentru upload date cu callback
-    // Metodă completă cu callback
     public void uploadHealthData(Map<String, Double> data, ApiCallback callback) {
-
         if (!HealthDataValidator.isValidData(data)) {
             if (callback != null) {
                 callback.onError("Invalid data values");
@@ -185,5 +189,26 @@ public class ApiClient {
 
     public static synchronized SensorDataApi createSensorDataApi() {
         return getClient().create(SensorDataApi.class);
+    }
+
+    private final OkHttpClient client = new OkHttpClient.Builder()
+            .addInterceptor(chain -> {
+                Request original = chain.request();
+                Request request = original.newBuilder()
+                        .header("Authorization", getBasicAuthHeader())
+                        .build();
+                Log.d(TAG, "Sending request to: " + request.url());
+                Response response = chain.proceed(request);
+                Log.d(TAG, "Received response code: " + response.code());
+                return response;
+            })
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .build();
+
+    private String getBasicAuthHeader() {
+        String credentials = "test-user:test-password";
+        return "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
     }
 }

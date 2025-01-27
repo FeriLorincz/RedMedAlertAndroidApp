@@ -13,36 +13,52 @@ import com.feri.redmedalertandroidapp.data.DataRepository;
 import com.feri.redmedalertandroidapp.data.model.SensorDataEntity;
 
 import com.feri.redmedalertandroidapp.network.NetworkModule;
+import com.feri.redmedalertandroidapp.network.NetworkStateMonitor;
 import com.feri.redmedalertandroidapp.network.SensorDataApi;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import retrofit2.Call;
 import retrofit2.Response;
 import timber.log.Timber;
 
 public class DatabaseUploader {
 
     private static final int MAX_BATCH_SIZE = 100;
-    private static final int MAX_RETRY_ATTEMPTS = 3;
+    private static final int MAX_RETRY_ATTEMPTS = 5;
     private static final long UPLOAD_INTERVAL_MINUTES = 15;
+    private static final int TIMEOUT_SECONDS = 30;
+    private static final int SYNC_TIMEOUT_SECONDS = 60;
+
 
     private final Context context;
     private final DataRepository dataRepository;
     private final SensorDataApi sensorDataApi;
-    private final ConnectivityManager connectivityManager;
+    private final NetworkStateMonitor networkMonitor;
 
     public DatabaseUploader(Context context, DataRepository dataRepository) {
         this.context = context;
         this.dataRepository = dataRepository;
-        //this.sensorDataApi = NetworkModule.getInstance().getSensorDataApi();
+        this.networkMonitor = createNetworkMonitor();
         this.sensorDataApi = createSensorApi();
-        this.connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         schedulePeriodicUpload();
     }
 
-    private void schedulePeriodicUpload() {
+    protected NetworkStateMonitor createNetworkMonitor() {
+        return new NetworkStateMonitor(context);
+    }
+
+    protected SensorDataApi createSensorApi() {
+        return NetworkModule.getInstance().getSensorDataApi();
+    }
+
+    protected void schedulePeriodicUpload() {
         Constraints constraints = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .setRequiresBatteryNotLow(true)
@@ -58,26 +74,33 @@ public class DatabaseUploader {
         WorkManager.getInstance(context).enqueue(uploadWorkRequest);
     }
 
-    public void uploadPendingData() {
+    public boolean uploadPendingData() {
         if (!isNetworkAvailable()) {
             Timber.d("No network connection available. Skipping upload.");
-            return;
+            return false;
         }
 
         try {
-            List<SensorDataEntity> unsyncedData = dataRepository.getUnsyncedData();
+            Future<List<SensorDataEntity>> futureSensorData = dataRepository.getUnsyncedData();
+            List<SensorDataEntity> unsyncedData = futureSensorData.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+
             if (unsyncedData.isEmpty()) {
                 Timber.d("No unsynced data to upload");
-                return;
+                return true;
             }
 
             List<List<SensorDataEntity>> batches = createBatches(unsyncedData);
+            boolean allSuccess = true;
             for (List<SensorDataEntity> batch : batches) {
-                uploadBatch(batch);
+                if (!uploadBatch(batch)) {
+                    allSuccess = false;
+                    break; // Important: ieșim din loop la prima eroare
+                }
             }
-
+            return allSuccess;
         } catch (Exception e) {
             Timber.e(e, "Error during data upload");
+            return false;
         }
     }
 
@@ -90,23 +113,74 @@ public class DatabaseUploader {
         return batches;
     }
 
-    private void uploadBatch(List<SensorDataEntity> batch) {
-        try {
-            Response<Void> response = sensorDataApi.uploadSensorData(batch).execute();
+    private boolean uploadBatch(List<SensorDataEntity> batch) {
+        if (batch == null || batch.isEmpty()) {
+            return true;
+        }
 
-            if (response.isSuccessful()) {
-                List<Long> uploadedIds = new ArrayList<>();
-                for (SensorDataEntity entity : batch) {
-                    uploadedIds.add(entity.getId());
-                }
-                dataRepository.markAsSynced(uploadedIds);
-                Timber.d("Successfully uploaded %d records", batch.size());
-            } else {
+        try {
+            Call<Void> call = sensorDataApi.uploadSensorData(batch);
+            Response<Void> response;
+
+            try {
+                response = call.execute();
+            } catch (IOException e) {
+                Timber.e(e, "Network error during batch upload");
                 handleUploadError(batch);
+                return false;
             }
+
+            if (!response.isSuccessful()) {
+                Timber.e("Upload failed with code: %d", response.code());
+                handleUploadError(batch);
+                return false;
+            }
+
+            try {
+                List<Long> uploadedIds = batch.stream()
+                        .map(SensorDataEntity::getId)
+                        .collect(Collectors.toList());
+
+                int markedCount = dataRepository.markAsSynced(uploadedIds)
+                        .get(SYNC_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+
+                if (markedCount != uploadedIds.size()) {
+                    handleUploadError(batch);
+                    return false;
+                }
+            } catch (Exception e) {
+                Timber.e(e, "Error marking data as synced");
+                handleUploadError(batch);
+                return false;
+            }
+
+            return true;
         } catch (Exception e) {
-            Timber.e(e, "Error uploading batch");
+            Timber.e(e, "Error during batch upload");
             handleUploadError(batch);
+            return false;
+        }
+    }
+
+    private boolean markAsSynced(List<SensorDataEntity> batch) {
+        List<Long> uploadedIds = batch.stream()
+                .map(SensorDataEntity::getId)
+                .collect(Collectors.toList());
+
+        try {
+            int markedCount = dataRepository.markAsSynced(uploadedIds)
+                    .get(SYNC_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+
+            if (markedCount != uploadedIds.size()) {
+                handleUploadError(batch);
+                return false;
+            }
+
+            return true;
+        } catch (Exception e) {
+            Timber.e(e, "Error marking data as synced");
+            handleUploadError(batch);
+            return false;
         }
     }
 
@@ -118,24 +192,28 @@ public class DatabaseUploader {
             }
         }
         if (!ids.isEmpty()) {
-            dataRepository.incrementUploadAttempts(ids);
+            try {
+                Future<Void> incrementFuture = dataRepository.incrementUploadAttempts(ids);
+                incrementFuture.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                Timber.e(e, "Error incrementing upload attempts");
+            }
         }
     }
 
     private boolean isNetworkAvailable() {
-        if (connectivityManager == null) return false;
-        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        return networkMonitor.isNetworkAvailable();
     }
 
     public void cleanOldData() {
-        // Păstrăm datele pentru ultimele 7 zile
-        long cutoffTime = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000);
-        dataRepository.cleanOldData(cutoffTime);
-    }
-
-    //Adăugat metodă protected pentru testare
-        protected SensorDataApi createSensorApi() {
-            return NetworkModule.getInstance().getSensorDataApi();
+        try {
+            // Păstrăm datele pentru ultimele 7 zile
+            long cutoffTime = System.currentTimeMillis() - (7 * 24 * 60 * 60 * 1000);
+            Future<Void> cleanupFuture = dataRepository.cleanOldData(cutoffTime);
+            cleanupFuture.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            Timber.e(e, "Error cleaning old data");
         }
+    }
 }
+

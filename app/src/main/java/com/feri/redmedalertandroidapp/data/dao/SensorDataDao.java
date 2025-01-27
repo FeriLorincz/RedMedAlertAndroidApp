@@ -26,12 +26,24 @@ public interface SensorDataDao {
     @Query("SELECT * FROM sensor_data WHERE sensorType = :type AND timestamp > :since")
     List<SensorDataEntity> getRecentDataByType(String type, long since);
 
-    @Query("UPDATE sensor_data SET isSynced = 1 WHERE id IN (:ids)")
-    void markAsSynced(List<Long> ids);
+    @Query("UPDATE sensor_data SET isSynced = 1 WHERE id IN (:ids) AND isSynced = 0")
+    int markAsSynced(List<Long> ids); // Returnează numărul de înregistrări actualizate
+
+    @Query("SELECT COUNT(*) FROM sensor_data WHERE id IN (:ids) AND isSynced = 0")
+    int countUnsyncedById(List<Long> ids);
+
+    @Query("SELECT * FROM sensor_data WHERE id IN (:ids)")
+    List<SensorDataEntity> getByIds(List<Long> ids);
+
 
     @Query("UPDATE sensor_data SET uploadAttempts = uploadAttempts + 1 WHERE id IN (:ids)")
     void incrementUploadAttempts(List<Long> ids);
 
     @Query("DELETE FROM sensor_data WHERE isSynced = 1 AND timestamp < :timestamp")
     void deleteOldSyncedData(long timestamp);
+
+    @Query("INSERT INTO sensor_data (deviceId, userId, sensorType, value, unit, timestamp, isSynced, uploadAttempts) " +
+            "VALUES (:deviceId, :userId, :sensorType, :value, :unit, :timestamp, :isSynced, :uploadAttempts)")
+    Long insertRaw(String deviceId, String userId, String sensorType, double value,
+                   String unit, long timestamp, boolean isSynced, int uploadAttempts);
 }

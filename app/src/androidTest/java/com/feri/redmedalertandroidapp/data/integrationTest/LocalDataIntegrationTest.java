@@ -23,125 +23,39 @@ public class LocalDataIntegrationTest {
     private DataRepository repository;
     private Context context;
 
-    @Before
-    public void setup() {
-        context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        repository = DataRepository.getInstance(context);
-        repository.clearAllData();
-        // Wait for clearAllData to complete
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @After
-    public void cleanup() {
-        if (repository != null) {
-            repository.clearAllData();
-            // Wait for cleanup to complete
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            repository.shutdown();
-        }
-    }
-
-    @Test
-    public void testLocalDataStorage() throws InterruptedException {
-        // Create test data
-        SensorDataEntity testData = new SensorDataEntity(
-                "test-device",
-                "test-user",
-                "HEART_RATE",
-                75.0,
-                "BPM",
-                System.currentTimeMillis()
-        );
-
-        // Save data
-        long insertedId = repository.saveSensorData(testData);
-        assertTrue("Data should be saved successfully", insertedId > 0);
-
-        // Wait for save to complete
-        Thread.sleep(1000);
-
-        // Verify data exists
-        List<SensorDataEntity> savedData = repository.getUnsyncedData();
-        assertEquals("Should have exactly one record", 1, savedData.size());
-
-        SensorDataEntity savedEntity = savedData.get(0);
-        assertEquals("Device ID should match", testData.getDeviceId(), savedEntity.getDeviceId());
-        assertEquals("User ID should match", testData.getUserId(), savedEntity.getUserId());
-        assertEquals("Sensor type should match", testData.getSensorType(), savedEntity.getSensorType());
-        assertEquals("Value should match", testData.getValue(), savedEntity.getValue(), 0.001);
-    }
-
-    @Test
-    public void testClearData() throws InterruptedException {
-        // Add test data
-        SensorDataEntity testData = new SensorDataEntity(
-                "test-device",
-                "test-user",
-                "HEART_RATE",
-                75.0,
-                "BPM",
-                System.currentTimeMillis()
-        );
-        repository.saveSensorData(testData);
-        Thread.sleep(1000);
-
-        // Verify data was added
-        List<SensorDataEntity> initialData = repository.getUnsyncedData();
-        assertFalse("Should have data initially", initialData.isEmpty());
-
-        // Clear data
-        repository.clearAllData();
-        Thread.sleep(1000);
-
-        // Verify data was cleared
-        List<SensorDataEntity> finalData = repository.getUnsyncedData();
-        assertTrue("Should have no data after clearing", finalData.isEmpty());
-    }
-}
-
-
-
-
-/* asta-i bun , dar cu erori la get
-
-    private DataRepository repository;
-    private Context context;
 
     @Before
     public void setup() {
         context = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        DataRepository.resetInstance(); // Reset any existing instance
         repository = DataRepository.getInstance(context);
 
-        // Clear data and wait for completion
+
         try {
             repository.clearAllData().get(5, TimeUnit.SECONDS);
+            Thread.sleep(500); // Small delay to ensure cleanup is complete
         } catch (Exception e) {
             e.printStackTrace();
+            fail("Setup failed: " + e.getMessage());
         }
     }
+
 
     @After
     public void cleanup() {
         if (repository != null) {
             try {
-                // Clear data and wait for completion
                 repository.clearAllData().get(5, TimeUnit.SECONDS);
-                // Shutdown repository and wait for completion
+                Thread.sleep(500); // Small delay to ensure cleanup is complete
                 repository.shutdown().get(5, TimeUnit.SECONDS);
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                DataRepository.resetInstance();
             }
         }
     }
+
 
     @Test
     public void testLocalDataStorage() throws Exception {
@@ -155,13 +69,17 @@ public class LocalDataIntegrationTest {
                 System.currentTimeMillis()
         );
 
+
         // Save data and wait for completion
         long insertedId = repository.saveSensorData(testData).get(5, TimeUnit.SECONDS);
         assertTrue("Data should be saved successfully", insertedId > 0);
+        Thread.sleep(500); // Small delay to ensure data is saved
+
 
         // Verify data exists
         List<SensorDataEntity> savedData = repository.getUnsyncedData().get(5, TimeUnit.SECONDS);
         assertEquals("Should have exactly one record", 1, savedData.size());
+
 
         SensorDataEntity savedEntity = savedData.get(0);
         assertEquals("Device ID should match", testData.getDeviceId(), savedEntity.getDeviceId());
@@ -169,6 +87,9 @@ public class LocalDataIntegrationTest {
         assertEquals("Sensor type should match", testData.getSensorType(), savedEntity.getSensorType());
         assertEquals("Value should match", testData.getValue(), savedEntity.getValue(), 0.001);
     }
+
+
+
 
     @Test
     public void testClearData() throws Exception {
@@ -182,19 +103,24 @@ public class LocalDataIntegrationTest {
                 System.currentTimeMillis()
         );
 
+
         // Save data and wait for completion
         repository.saveSensorData(testData).get(5, TimeUnit.SECONDS);
+        Thread.sleep(500); // Small delay to ensure data is saved
+
 
         // Verify data was added
         List<SensorDataEntity> initialData = repository.getUnsyncedData().get(5, TimeUnit.SECONDS);
         assertFalse("Should have data initially", initialData.isEmpty());
 
+
         // Clear data and wait for completion
         repository.clearAllData().get(5, TimeUnit.SECONDS);
+        Thread.sleep(500); // Small delay to ensure cleanup is complete
+
 
         // Verify data was cleared
         List<SensorDataEntity> finalData = repository.getUnsyncedData().get(5, TimeUnit.SECONDS);
         assertTrue("Should have no data after clearing", finalData.isEmpty());
     }
 }
-*/

@@ -1,6 +1,8 @@
 package com.feri.redmedalertandroidapp.data.model;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 import com.feri.redmedalertandroidapp.data.utils.DateConverter;
@@ -21,12 +23,15 @@ public class SensorDataEntity {
     private long timestamp;
     private boolean isAnomalous;
     private String additionalInfo;  // JSON pentru date extra
+    @ColumnInfo(name = "isSynced")
     private boolean isSynced;       // Flag pentru status sincronizare
     private int uploadAttempts;     // Număr încercări upload
 
-    // Constructori
+    // Constructor implicit pentru Room
     public SensorDataEntity() {}
 
+    // Constructor la care adăugăm @Ignore pentru acest constructor cu parametri
+    @Ignore
     public SensorDataEntity(String deviceId, String userId, String sensorType,
                             double value, String unit, long timestamp) {
         this.deviceId = deviceId;
@@ -38,6 +43,7 @@ public class SensorDataEntity {
         this.isSynced = false;
         this.uploadAttempts = 0;
     }
+
 
     // Getters și Setters
     public long getId() { return id; }
