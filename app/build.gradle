@@ -2,9 +2,15 @@ plugins {
     id 'com.android.application'
 }
 
+
+
+
 android {
     namespace 'com.feri.redmedalertandroidapp'
     compileSdk 34
+
+
+
 
     defaultConfig {
         applicationId "com.feri.redmedalertandroidapp"
@@ -13,20 +19,39 @@ android {
         versionCode 1
         versionName "1.0"
 
+
+
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    // Enable database testing
-    testOptions {
-        unitTests.includeAndroidResources = true
+
+
+
+    // Adaugă acest bloc packaging
+    packaging {
+        resources {
+            excludes += ['META-INF/*']
+            // Specifică exact ce fișier MockMaker să fie folosit
+            pickFirsts += [
+                    'mockito-extensions/org.mockito.plugins.MockMaker'
+            ]
+        }
     }
 
-    // Adăugăm această configurare pentru teste
+
+
+
+    // Enable database testing
     testOptions {
         unitTests {
             includeAndroidResources = true
+            returnDefaultValues = true
         }
     }
+
+
+
 
     buildTypes {
         release {
@@ -35,11 +60,27 @@ android {
         }
     }
 
+
+
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
 }
+
+
+
+
+repositories {
+    google()
+    mavenCentral()
+    // Adăugăm repository-ul pentru versiuni mai noi de Mockito
+    maven { url 'https://jitpack.io' }
+}
+
+
+
 
 dependencies {
     // Core Android dependencies
@@ -47,29 +88,49 @@ dependencies {
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
+
+
+
     // Samsung Health SDK
-    //implementation(name: 'samsung-health-data-v1.5.1', ext: 'aar')
     implementation fileTree(dir: 'libs', include: ['*.aar', '*.jar'])
+
+
+
 
     // Networking, Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
 
+
+
+
     // Gson pentru procesarea JSON
     implementation 'com.google.code.gson:gson:2.10.1'
+
+
+
 
     // Reactive Programming
     implementation 'io.reactivex.rxjava3:rxjava:3.1.8'
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
+
+
+
 
     // Dependency Injection
     implementation 'com.google.dagger:hilt-android:2.50'
     implementation libs.junit.junit
     annotationProcessor 'com.google.dagger:hilt-compiler:2.50'
 
+
+
+
     // Background Work
     implementation 'androidx.work:work-runtime:2.9.0'
+
+
+
 
     // Testing Dependencies
     testImplementation 'junit:junit:4.13.2'
@@ -78,27 +139,49 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     testImplementation 'org.robolectric:robolectric:4.9'
-    testImplementation 'org.mockito:mockito-core:5.8.0'
-    testImplementation 'org.mockito:mockito-inline:5.8.0'
+
+
+
+
+    // Mockito pentru teste unitare
+    testImplementation 'org.mockito:mockito-core:4.11.0'
+    testImplementation 'org.mockito:mockito-inline:4.11.0'
+//    testImplementation 'org.mockito:mockito-core:5.8.0'
+//    testImplementation 'org.mockito:mockito-inline:5.8.0'
+
+
+
+
+    // Mockito și dexmaker pentru teste de instrumentare
+    androidTestImplementation 'org.mockito:mockito-android:4.11.0'
+    // androidTestImplementation 'org.mockito:mockito-android:5.8.0'
+    androidTestImplementation 'com.linkedin.dexmaker:dexmaker-mockito:2.28.3'
+
+
+
+
     testImplementation 'androidx.test:core:1.5.0'
-    androidTestImplementation 'org.mockito:mockito-android:5.8.0'
     androidTestImplementation 'androidx.room:room-testing:2.6.1'
 
-    //cache
-    def room_version = "2.6.1"
-    implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
 
-    // Coroutines pentru operații asincrone
+    implementation 'androidx.room:room-runtime:2.6.1'
+    implementation 'androidx.room:room-ktx:2.6.1'
+    annotationProcessor 'androidx.room:room-compiler:2.6.1'
+
+
+    // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
+
 
     // ViewModel și LiveData
     implementation 'androidx.lifecycle:lifecycle-viewmodel:2.7.0'
     implementation 'androidx.lifecycle:lifecycle-livedata:2.7.0'
 
+
     // ViewPager2
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
+
 
     implementation 'com.jakewharton.timber:timber:5.0.1'
 }

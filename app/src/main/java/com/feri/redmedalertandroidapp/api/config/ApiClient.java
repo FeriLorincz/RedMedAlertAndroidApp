@@ -1,10 +1,14 @@
 package com.feri.redmedalertandroidapp.api.config;
 
 
+
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
+
+
 
 
 import com.feri.redmedalertandroidapp.api.model.HealthDataPayload;
@@ -28,7 +32,9 @@ import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+
 public class ApiClient {
+
 
     private static final String TAG = "ApiClient";
     private static final String BASE_URL = "http://192.168.0.91:8080/"; // Înlocuiește cu URL-ul real
@@ -38,6 +44,7 @@ public class ApiClient {
     private final Context context;
     private final NotificationService notificationService;
 
+
     // Constructor privat pentru Singleton
     private ApiClient(Context context) {
         this.context = context.getApplicationContext();
@@ -45,6 +52,7 @@ public class ApiClient {
         apiService = retrofit.create(HealthDataApiService.class);
         notificationService = new NotificationService(context);
     }
+
 
     public static String getBaseUrl() {
         return BASE_URL;
@@ -57,6 +65,7 @@ public class ApiClient {
         return instance;
     }
 
+
     // Configurare client Retrofit
     public static Retrofit getClient() {
         if (retrofit == null) {
@@ -64,6 +73,7 @@ public class ApiClient {
             HttpLoggingInterceptor logging = new HttpLoggingInterceptor(message ->
                     Log.d(TAG, "okHttp: " + message));
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
 
             // Configurăm OkHttpClient cu timeout și logging
             OkHttpClient client = new OkHttpClient.Builder()
@@ -80,6 +90,7 @@ public class ApiClient {
                     .writeTimeout(60, TimeUnit.SECONDS)
                     .build();
 
+
             // Construim Retrofit
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
@@ -90,10 +101,12 @@ public class ApiClient {
         return retrofit;
     }
 
+
     // Metodă simplificată pentru cazurile fără callback
     public void uploadHealthData(Map<String, Double> data) {
         uploadHealthData(data, null);
     }
+
 
     // Metodă completă pentru upload date cu callback
     public void uploadHealthData(Map<String, Double> data, ApiCallback callback) {
@@ -103,6 +116,7 @@ public class ApiClient {
             }
             return;
         }
+
 
         HealthDataPayload payload;
         if (BuildConfig.DEBUG) {
@@ -114,6 +128,7 @@ public class ApiClient {
             String userId = getUserInfo().getUserId();
             payload = new HealthDataPayload(deviceId, userId, data);
         }
+
 
         apiService.testHealthData(payload).enqueue(new Callback<Void>() {
             @Override
@@ -130,6 +145,7 @@ public class ApiClient {
                 }
             }
 
+
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 String error = "Upload failed: " + t.getMessage();
@@ -139,6 +155,7 @@ public class ApiClient {
             }
         });
     }
+
 
     // Metode helper pentru obținerea informațiilor reale
     private DeviceInfo getDeviceInfo() {
@@ -161,12 +178,14 @@ public class ApiClient {
         return new DeviceInfo(deviceId);
     }
 
+
     private UserInfo getUserInfo() {
         // Implementare pentru obținerea informațiilor despre utilizator
         // Aici ar trebui să vină din SharedPreferences sau alt storage
         SharedPreferences prefs = context.getSharedPreferences("RedMedAlert", Context.MODE_PRIVATE);
         return new UserInfo(prefs.getString("user_id", "unknown"));
     }
+
 
     // Clase helper interne
     private static class DeviceInfo {
@@ -175,11 +194,13 @@ public class ApiClient {
         String getDeviceId() { return deviceId; }
     }
 
+
     private static class UserInfo {
         private final String userId;
         UserInfo(String userId) { this.userId = userId; }
         String getUserId() { return userId; }
     }
+
 
     // Metodă pentru resetarea instanței (utilă pentru teste)
     public static void resetInstance() {
@@ -187,9 +208,11 @@ public class ApiClient {
         retrofit = null;
     }
 
+
     public static synchronized SensorDataApi createSensorDataApi() {
         return getClient().create(SensorDataApi.class);
     }
+
 
     private final OkHttpClient client = new OkHttpClient.Builder()
             .addInterceptor(chain -> {
@@ -206,6 +229,7 @@ public class ApiClient {
             .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
             .build();
+
 
     private String getBasicAuthHeader() {
         String credentials = "test-user:test-password";
