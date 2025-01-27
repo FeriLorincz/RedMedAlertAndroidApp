@@ -23,7 +23,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+<<<<<<< HEAD
 import retrofit2.Call;
+=======
+>>>>>>> origin/master
 import retrofit2.Response;
 import timber.log.Timber;
 
@@ -33,8 +36,11 @@ public class DatabaseUploader {
     private static final int MAX_RETRY_ATTEMPTS = 5;
     private static final long UPLOAD_INTERVAL_MINUTES = 15;
     private static final int TIMEOUT_SECONDS = 30;
+<<<<<<< HEAD
     private static final int SYNC_TIMEOUT_SECONDS = 60;
 
+=======
+>>>>>>> origin/master
 
     private final Context context;
     private final DataRepository dataRepository;
@@ -44,7 +50,10 @@ public class DatabaseUploader {
     public DatabaseUploader(Context context, DataRepository dataRepository) {
         this.context = context;
         this.dataRepository = dataRepository;
+<<<<<<< HEAD
         this.networkMonitor = createNetworkMonitor();
+=======
+>>>>>>> origin/master
         this.sensorDataApi = createSensorApi();
 
         schedulePeriodicUpload();
@@ -94,7 +103,10 @@ public class DatabaseUploader {
             for (List<SensorDataEntity> batch : batches) {
                 if (!uploadBatch(batch)) {
                     allSuccess = false;
+<<<<<<< HEAD
                     break; // Important: ieșim din loop la prima eroare
+=======
+>>>>>>> origin/master
                 }
             }
             return allSuccess;
@@ -114,6 +126,7 @@ public class DatabaseUploader {
     }
 
     private boolean uploadBatch(List<SensorDataEntity> batch) {
+<<<<<<< HEAD
         if (batch == null || batch.isEmpty()) {
             return true;
         }
@@ -127,6 +140,48 @@ public class DatabaseUploader {
             } catch (IOException e) {
                 Timber.e(e, "Network error during batch upload");
                 handleUploadError(batch);
+=======
+        try {
+            Timber.tag("SyncTest").d("Attempting to upload batch of %d records - tag", batch.size());
+            Timber.d("Starting upload for batch of %d records", batch.size());
+            Response<Void> response = sensorDataApi.uploadSensorData(batch).execute();
+            Timber.d("Server response received: %d", response.code());
+            Timber.tag("SyncTest").d("Upload response: %d - tag", response.code());
+
+            if (response.isSuccessful()) {
+                List<Long> uploadedIds = batch.stream()
+                        .map(SensorDataEntity::getId)
+                        .collect(Collectors.toList());
+
+                Timber.d("Upload successful, marking IDs as synced: %s", uploadedIds);
+
+                try {
+                    // Markăm ca sincronizate și așteaptăm confirmarea
+                    Future<Void> markSyncedFuture = dataRepository.markAsSynced(uploadedIds);
+                    markSyncedFuture.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+
+                    // Verificăm explicit că datele au fost marcate
+                    Future<List<SensorDataEntity>> verifyFuture = dataRepository.getUnsyncedData();
+                    List<SensorDataEntity> remainingUnsynced = verifyFuture.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+                    boolean allSynced = remainingUnsynced.stream()
+                            .noneMatch(data -> uploadedIds.contains(data.getId()));
+
+                    if (allSynced) {
+                        Timber.d("Successfully verified sync for IDs: %s", uploadedIds);
+                        return true;
+                    } else {
+                        Timber.e("Failed to verify sync for IDs: %s", uploadedIds);
+                        return false;
+                    }
+                } catch (Exception e) {
+                    Timber.e(e, "Error marking data as synced");
+                    return false;
+                }
+            } else {
+                Timber.e("Upload failed with code: %d, body: %s",
+                        response.code(),
+                        response.errorBody() != null ? response.errorBody().string() : "no error body");
+>>>>>>> origin/master
                 return false;
             }
 
@@ -156,6 +211,7 @@ public class DatabaseUploader {
 
             return true;
         } catch (Exception e) {
+<<<<<<< HEAD
             Timber.e(e, "Error during batch upload");
             handleUploadError(batch);
             return false;
@@ -180,6 +236,10 @@ public class DatabaseUploader {
         } catch (Exception e) {
             Timber.e(e, "Error marking data as synced");
             handleUploadError(batch);
+=======
+            Timber.tag("SyncTest").e(e, "Error during batch upload - tag");
+            Timber.e(e, "Error during batch upload: %s", e.getMessage());
+>>>>>>> origin/master
             return false;
         }
     }
@@ -215,5 +275,12 @@ public class DatabaseUploader {
             Timber.e(e, "Error cleaning old data");
         }
     }
+<<<<<<< HEAD
+=======
+
+    protected SensorDataApi createSensorApi() {
+        return NetworkModule.getInstance().getSensorDataApi();
+    }
+>>>>>>> origin/master
 }
 

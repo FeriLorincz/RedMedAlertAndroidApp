@@ -22,6 +22,10 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.Future;
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
 import static org.junit.Assert.*;
 
 @RunWith(AndroidJUnit4.class)
@@ -38,7 +42,10 @@ public class NetworkSyncIntegrationTest {
     public void setup() {
         context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         repository = DataRepository.getInstance(context);
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
 
         try {
             repository.clearAllData().get(5, TimeUnit.SECONDS);
@@ -71,7 +78,10 @@ public class NetworkSyncIntegrationTest {
     public void cleanup() {
         if (repository != null) {
             try {
+<<<<<<< HEAD
                 WorkManager.getInstance(context).cancelAllWork();
+=======
+>>>>>>> origin/master
                 repository.clearAllData().get(5, TimeUnit.SECONDS);
                 Thread.sleep(1000);
                 repository.shutdown().get(5, TimeUnit.SECONDS);
@@ -84,10 +94,13 @@ public class NetworkSyncIntegrationTest {
 
     @Test
     public void testOfflineCapabilities() throws Exception {
+<<<<<<< HEAD
         // Disable WorkManager for test
         WorkManager.getInstance(context).cancelAllWork();
 
 
+=======
+>>>>>>> origin/master
         // Create and save test data
         SensorDataEntity testData = new SensorDataEntity(
                 "test-device",
@@ -98,7 +111,10 @@ public class NetworkSyncIntegrationTest {
                 System.currentTimeMillis()
         );
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
         Future<Long> insertFuture = repository.saveSensorData(testData);
         long insertedId = insertFuture.get(5, TimeUnit.SECONDS);
         assertTrue("Data should be saved successfully", insertedId > 0);
@@ -110,6 +126,7 @@ public class NetworkSyncIntegrationTest {
         List<SensorDataEntity> initialData = initialDataFuture.get(5, TimeUnit.SECONDS);
         assertEquals("Should have one unsynced record", 1, initialData.size());
 
+<<<<<<< HEAD
 
         // Create a test uploader that simulates offline behavior
         DatabaseUploader offlineUploader = new DatabaseUploader(context, repository) {
@@ -172,6 +189,16 @@ public class NetworkSyncIntegrationTest {
         // Attempt upload with simulated offline state
         boolean uploadResult = offlineUploader.uploadPendingData();
         assertFalse("Upload should fail without network", uploadResult);
+=======
+        // Attempt upload with no network
+//        boolean uploadResult = uploader.uploadPendingData();
+//        assertFalse("Upload should fail without network", uploadResult);
+//        Thread.sleep(1000);
+
+
+        // Attempt upload with no network
+        uploader.uploadPendingData();
+>>>>>>> origin/master
         Thread.sleep(1000);
 
 
@@ -180,5 +207,9 @@ public class NetworkSyncIntegrationTest {
         List<SensorDataEntity> finalData = finalDataFuture.get(5, TimeUnit.SECONDS);
         assertEquals("Should still have one unsynced record", 1, finalData.size());
     }
+<<<<<<< HEAD
 }
 
+=======
+}
+>>>>>>> origin/master

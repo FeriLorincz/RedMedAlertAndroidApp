@@ -5,6 +5,7 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+<<<<<<< HEAD
       <SelectionState runConfigName="SyncIntegrationTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
@@ -15,9 +16,18 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="networkCallback_shouldNotifyOnNetworkAvailable()">
+=======
+      <SelectionState runConfigName="SyncManagerTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="SyncIntegrationTest">
+>>>>>>> origin/master
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="RetryHandlerTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="testTimestampHandling()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

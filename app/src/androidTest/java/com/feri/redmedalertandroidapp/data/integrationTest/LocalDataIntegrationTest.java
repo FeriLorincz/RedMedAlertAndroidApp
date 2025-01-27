@@ -23,14 +23,20 @@ public class LocalDataIntegrationTest {
     private DataRepository repository;
     private Context context;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
     @Before
     public void setup() {
         context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         DataRepository.resetInstance(); // Reset any existing instance
         repository = DataRepository.getInstance(context);
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
         try {
             repository.clearAllData().get(5, TimeUnit.SECONDS);
             Thread.sleep(500); // Small delay to ensure cleanup is complete
@@ -74,7 +80,10 @@ public class LocalDataIntegrationTest {
         long insertedId = repository.saveSensorData(testData).get(5, TimeUnit.SECONDS);
         assertTrue("Data should be saved successfully", insertedId > 0);
         Thread.sleep(500); // Small delay to ensure data is saved
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
 
         // Verify data exists
         List<SensorDataEntity> savedData = repository.getUnsyncedData().get(5, TimeUnit.SECONDS);
@@ -89,8 +98,11 @@ public class LocalDataIntegrationTest {
     }
 
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> origin/master
     @Test
     public void testClearData() throws Exception {
         // Add test data
@@ -107,7 +119,10 @@ public class LocalDataIntegrationTest {
         // Save data and wait for completion
         repository.saveSensorData(testData).get(5, TimeUnit.SECONDS);
         Thread.sleep(500); // Small delay to ensure data is saved
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
 
         // Verify data was added
         List<SensorDataEntity> initialData = repository.getUnsyncedData().get(5, TimeUnit.SECONDS);
@@ -117,7 +132,10 @@ public class LocalDataIntegrationTest {
         // Clear data and wait for completion
         repository.clearAllData().get(5, TimeUnit.SECONDS);
         Thread.sleep(500); // Small delay to ensure cleanup is complete
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
 
         // Verify data was cleared
         List<SensorDataEntity> finalData = repository.getUnsyncedData().get(5, TimeUnit.SECONDS);

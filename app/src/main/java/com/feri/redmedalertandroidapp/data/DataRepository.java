@@ -10,13 +10,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
+<<<<<<< HEAD
 import java.util.concurrent.CompletableFuture;
+=======
+>>>>>>> origin/master
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+<<<<<<< HEAD
 import java.util.concurrent.locks.ReentrantLock;
+=======
+>>>>>>> origin/master
 import java.util.stream.Collectors;
 
 import timber.log.Timber;
@@ -29,6 +36,7 @@ public class DataRepository {
     private final AppDatabase database;
     private ExecutorService executorService;
     private final AtomicBoolean isShutdown = new AtomicBoolean(false);
+<<<<<<< HEAD
     private static final Object LOCK = new Object();
     private volatile boolean isClosing = false;
     private static final ReentrantLock instanceLock = new ReentrantLock();
@@ -98,6 +106,37 @@ public class DataRepository {
                 throw e;
             }
         });
+=======
+
+    private DataRepository(Context context) {
+        database = Room.databaseBuilder(
+                        context.getApplicationContext(),
+                        AppDatabase.class,
+                        DATABASE_NAME)
+                .build();
+
+        this.sensorDataDao = database.sensorDataDao();
+        this.executorService = Executors.newFixedThreadPool(4);
+    }
+
+    public static synchronized DataRepository getInstance(Context context) {
+        if (instance == null) {
+            instance = new DataRepository(context);
+        }
+        return instance;
+    }
+
+    private synchronized void ensureExecutorService() {
+        if (executorService == null || executorService.isShutdown()) {
+            executorService = Executors.newFixedThreadPool(4);
+            isShutdown.set(false);
+        }
+    }
+
+    public Future<Long> saveSensorData(final SensorDataEntity sensorData) {
+        ensureExecutorService();
+        return executorService.submit(() -> sensorDataDao.insert(sensorData));
+>>>>>>> origin/master
     }
 
     public Future<Void> saveSensorDataBatch(final List<SensorDataEntity> sensorDataList) {
@@ -108,6 +147,7 @@ public class DataRepository {
         });
     }
 
+<<<<<<< HEAD
 
     public Future<List<SensorDataEntity>> getUnsyncedData() {
         ensureExecutorService();
@@ -129,33 +169,55 @@ public class DataRepository {
 
 
     public Future<Integer> markAsSynced(final List<Long> ids) {
+=======
+    public Future<List<SensorDataEntity>> getUnsyncedData() {
+        ensureExecutorService();
+        return executorService.submit(sensorDataDao::getUnsyncedData);
+    }
+
+    public Future<Void> markAsSynced(final List<Long> ids) {
+>>>>>>> origin/master
         ensureExecutorService();
         return executorService.submit(() -> {
             try {
                 Timber.d("Marking IDs as synced: %s", ids);
+<<<<<<< HEAD
                 int updatedCount = sensorDataDao.markAsSynced(ids);
 
+=======
+                sensorDataDao.markAsSynced(ids);
+>>>>>>> origin/master
 
                 // Verificare imediată
                 List<SensorDataEntity> stillUnsynced = sensorDataDao.getUnsyncedData();
                 Timber.d("After marking as synced, found %d unsynced records",
                         stillUnsynced.size());
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
                 // Verificare specifică pentru ID-urile marcate
                 List<Long> stillUnsyncedIds = stillUnsynced.stream()
                         .map(SensorDataEntity::getId)
                         .filter(ids::contains)
                         .collect(Collectors.toList());
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
                 if (!stillUnsyncedIds.isEmpty()) {
                     Timber.e("Failed to mark IDs as synced: %s", stillUnsyncedIds);
                     throw new RuntimeException("Failed to mark all data as synced");
                 }
 
+<<<<<<< HEAD
 
                 return updatedCount;
+=======
+                return null;
+>>>>>>> origin/master
             } catch (Exception e) {
                 Timber.e(e, "Error marking data as synced");
                 throw e;
@@ -163,6 +225,7 @@ public class DataRepository {
         });
     }
 
+<<<<<<< HEAD
 
     public Future<List<SensorDataEntity>> getByIds(final List<Long> ids) {
         ensureExecutorService();
@@ -180,6 +243,8 @@ public class DataRepository {
     }
 
 
+=======
+>>>>>>> origin/master
     public Future<Void> incrementUploadAttempts(final List<Long> ids) {
         ensureExecutorService();
         return executorService.submit(() -> {
@@ -188,7 +253,10 @@ public class DataRepository {
         });
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
     public Future<Void> cleanOldData(final long timestamp) {
         ensureExecutorService();
         return executorService.submit(() -> {
@@ -197,7 +265,10 @@ public class DataRepository {
         });
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
     public Future<Void> clearAllData() {
         ensureExecutorService();
         return executorService.submit(() -> {
@@ -206,6 +277,7 @@ public class DataRepository {
         });
     }
 
+<<<<<<< HEAD
 
     public Future<Void> shutdown() {
         instanceLock.lock();
@@ -282,3 +354,37 @@ public class DataRepository {
 }
 
 
+=======
+    public synchronized Future<Void> shutdown() {
+        if (isShutdown.get()) {
+            return executorService.submit(() -> null);
+        }
+
+        return executorService.submit(() -> {
+            try {
+                isShutdown.set(true);
+                executorService.shutdown();
+                if (!executorService.awaitTermination(5, TimeUnit.SECONDS)) {
+                    executorService.shutdownNow();
+                }
+                database.close();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException("Shutdown interrupted", e);
+            }
+            return null;
+        });
+    }
+
+    public static synchronized void resetInstance() {
+        if (instance != null) {
+            try {
+                instance.shutdown().get(5, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            instance = null;
+        }
+    }
+}
+>>>>>>> origin/master
