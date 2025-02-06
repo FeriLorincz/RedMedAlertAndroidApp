@@ -11,6 +11,9 @@
     <!-- Samsung Health Permissions -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BODY_SENSORS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.samsung.android.health.permission.read" />
@@ -42,6 +45,7 @@
     <uses-permission android:name="com.feri.redmedalertandroidapp.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
 
     <application
+        android:name="com.feri.redmedalertandroidapp.health.RedMedAlertApplication"
         android:allowBackup="true"
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:debuggable="true"
@@ -51,39 +55,52 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:testOnly="true"
         android:theme="@style/Theme.RedMedAlertAndroidApp" >
         <activity
-            android:name="com.feri.redmedalertandroidapp.MainActivity"
-            android:exported="true" >
+            android:name="com.feri.redmedalertandroidapp.splash.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.RedMedAlertAndroidApp.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.feri.redmedalertandroidapp.MainActivity"
+            android:exported="false" />
         <activity
             android:name="com.feri.redmedalertandroidapp.TestActivity"
-            android:exported="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:exported="false" />
         <activity
             android:name="com.feri.redmedalertandroidapp.SensorTestActivity"
-            android:exported="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:exported="true" />
         <activity
             android:name="com.feri.redmedalertandroidapp.notification.NotificationSettingsActivity"
-            android:exported="false"
-            android:label="Setări Notificări" >
-        </activity>
+            android:exported="false" />
+        <activity
+            android:name="com.feri.redmedalertandroidapp.auth.ui.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.feri.redmedalertandroidapp.auth.ui.RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.feri.redmedalertandroidapp.auth.ui.ForgotPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.feri.redmedalertandroidapp.auth.ui.ResetPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.feri.redmedalertandroidapp.splash.UserDataCompletionActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.feri.redmedalertandroidapp.dashboard.DashboardActivity"
+            android:exported="false" />
+
+        <service
+            android:name="com.feri.redmedalertandroidapp.health.HealthMonitoringService"
+            android:exported="false" />
 
         <!-- Samsung Health App ID -->
         <meta-data

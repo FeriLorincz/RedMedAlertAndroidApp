@@ -1,6 +1,5 @@
 package com.feri.redmedalertandroidapp.network;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -11,21 +10,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-
 @RunWith(AndroidJUnit4.class)
 public class NetworkStateMonitorTest {
-
 
     private Context context;
     private TestNetworkCallback testCallback;
     private NetworkStateMonitor networkStateMonitor;
 
-
     // Implementare concretă pentru teste
     private static class TestNetworkCallback implements NetworkStateCallback {
         private boolean lastKnownState;
         private int callCount = 0;
-
 
         @Override
         public void onNetworkStateChanged(boolean isConnected) {
@@ -33,23 +28,19 @@ public class NetworkStateMonitorTest {
             callCount++;
         }
 
-
         public boolean getLastKnownState() {
             return lastKnownState;
         }
 
-
         public int getCallCount() {
             return callCount;
         }
-
 
         public void reset() {
             callCount = 0;
             lastKnownState = false;
         }
     }
-
 
     @Before
     public void setup() {
@@ -58,12 +49,10 @@ public class NetworkStateMonitorTest {
         networkStateMonitor = new TestableNetworkStateMonitor(context);
     }
 
-
     private class TestableNetworkStateMonitor extends NetworkStateMonitor {
         public TestableNetworkStateMonitor(Context context) {
             super(context);
         }
-
 
         @Override
         public void startMonitoring(NetworkStateCallback callback) {
@@ -71,24 +60,20 @@ public class NetworkStateMonitorTest {
             this.callback = callback;
         }
 
-
         @Override
         public void stopMonitoring() {
             // Setăm callback-ul la null când oprim monitorizarea
             this.callback = null;
         }
 
-
         public void simulateNetworkAvailable() {
             notifyNetworkState(true);
         }
-
 
         public void simulateNetworkLost() {
             notifyNetworkState(false);
         }
     }
-
 
     @Test
     public void startMonitoring_shouldStartMonitoring() {
@@ -102,7 +87,6 @@ public class NetworkStateMonitorTest {
         assertTrue("Network should be reported as available", testCallback.getLastKnownState());
     }
 
-
     @Test
     public void stopMonitoring_shouldStopMonitoring() {
         // Arrange
@@ -115,7 +99,6 @@ public class NetworkStateMonitorTest {
         assertEquals("Callback should not have been called after stopping", 0, testCallback.getCallCount());
     }
 
-
     @Test
     public void networkCallback_shouldNotifyOnNetworkAvailable() {
         // Arrange
@@ -127,7 +110,6 @@ public class NetworkStateMonitorTest {
         assertTrue("Network should be reported as available", testCallback.getLastKnownState());
         assertEquals("Callback should have been called once", 1, testCallback.getCallCount());
     }
-
 
     @Test
     public void networkCallback_shouldNotifyOnNetworkLost() {

@@ -11,16 +11,13 @@ import timber.log.Timber;
 
 public class DatabaseUploadWorker extends Worker{
 
-
     private final DatabaseUploader databaseUploader;
-
 
     public DatabaseUploadWorker(@NonNull Context context, @NonNull WorkerParameters params) {
         super(context, params);
         DataRepository repository = DataRepository.getInstance(context);
         this.databaseUploader = new DatabaseUploader(context, repository);
     }
-
 
     @NonNull
     @Override

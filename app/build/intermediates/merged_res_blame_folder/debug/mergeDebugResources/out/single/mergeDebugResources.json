@@ -32,8 +32,20 @@
         "source": "com.feri.redmedalertandroidapp-main-40:/layout/fragment_sensor_data.xml"
     },
     {
+        "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_activity_login.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-40:/layout/activity_login.xml"
+    },
+    {
         "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_item_medication.xml.flat",
         "source": "com.feri.redmedalertandroidapp-main-40:/layout/item_medication.xml"
+    },
+    {
+        "merged": "com.feri.redmedalertandroidapp-debug-38:/drawable_ic_email.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-40:/drawable/ic_email.xml"
+    },
+    {
+        "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_activity_reset_password.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-40:/layout/activity_reset_password.xml"
     },
     {
         "merged": "com.feri.redmedalertandroidapp-debug-38:/mipmap-anydpi_ic_launcher.xml.flat",
@@ -42,6 +54,10 @@
     {
         "merged": "com.feri.redmedalertandroidapp-debug-38:/mipmap-mdpi_ic_launcher.webp.flat",
         "source": "com.feri.redmedalertandroidapp-main-40:/mipmap-mdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_activity_forgot_password.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-40:/layout/activity_forgot_password.xml"
     },
     {
         "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_activity_notification_settings.xml.flat",
@@ -68,6 +84,10 @@
         "source": "com.feri.redmedalertandroidapp-main-40:/layout/fragment_personal_data.xml"
     },
     {
+        "merged": "com.feri.redmedalertandroidapp-debug-38:/drawable_status_connected.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-40:/drawable/status_connected.xml"
+    },
+    {
         "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_activity_main.xml.flat",
         "source": "com.feri.redmedalertandroidapp-main-40:/layout/activity_main.xml"
     },
@@ -84,8 +104,16 @@
         "source": "com.feri.redmedalertandroidapp-main-40:/mipmap-xxhdpi/ic_launcher.webp"
     },
     {
+        "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_activity_register.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-40:/layout/activity_register.xml"
+    },
+    {
         "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_dialog_emergency_contact.xml.flat",
         "source": "com.feri.redmedalertandroidapp-main-40:/layout/dialog_emergency_contact.xml"
+    },
+    {
+        "merged": "com.feri.redmedalertandroidapp-debug-38:/drawable_status_disconnected.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-40:/drawable/status_disconnected.xml"
     },
     {
         "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_activity_dashboard.xml.flat",
@@ -98,6 +126,10 @@
     {
         "merged": "com.feri.redmedalertandroidapp-debug-38:/mipmap-hdpi_ic_launcher_round.webp.flat",
         "source": "com.feri.redmedalertandroidapp-main-40:/mipmap-hdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_activity_splash.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-40:/layout/activity_splash.xml"
     },
     {
         "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_item_emergency_contact.xml.flat",
@@ -118,6 +150,14 @@
     {
         "merged": "com.feri.redmedalertandroidapp-debug-38:/drawable_ic_launcher_background.xml.flat",
         "source": "com.feri.redmedalertandroidapp-main-40:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_activity_user_data_completion.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-40:/layout/activity_user_data_completion.xml"
+    },
+    {
+        "merged": "com.feri.redmedalertandroidapp-debug-38:/drawable_ic_password.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-40:/drawable/ic_password.xml"
     },
     {
         "merged": "com.feri.redmedalertandroidapp-debug-38:/drawable_ic_launcher_foreground.xml.flat",

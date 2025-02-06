@@ -27,7 +27,6 @@ import timber.log.Timber;
 
 public class DataRepository {
 
-
     private static final String DATABASE_NAME = "redmedalert_db";
     private static DataRepository instance;
     private final SensorDataDao sensorDataDao;
@@ -38,15 +37,11 @@ public class DataRepository {
     private volatile boolean isClosing = false;
     private static final ReentrantLock instanceLock = new ReentrantLock();
 
-
-
-
     private DataRepository(Context context) {
         database = AppDatabase.buildDatabase(context);
         this.sensorDataDao = database.sensorDataDao();
         this.executorService = Executors.newFixedThreadPool(4);
     }
-
 
     public static synchronized DataRepository getInstance(Context context) {
         instanceLock.lock();
@@ -64,9 +59,6 @@ public class DataRepository {
         }
     }
 
-
-
-
     private synchronized void ensureExecutorService() {
         if (isClosing) {
             throw new IllegalStateException("Repository is shutting down");
@@ -75,9 +67,6 @@ public class DataRepository {
             executorService = Executors.newFixedThreadPool(4);
         }
     }
-
-
-
 
     public synchronized Future<Long> saveSensorData(final SensorDataEntity sensorData) {
         ensureExecutorService();
@@ -115,7 +104,6 @@ public class DataRepository {
         });
     }
 
-
     public Future<Void> saveSensorDataBatch(final List<SensorDataEntity> sensorDataList) {
         ensureExecutorService();
         return executorService.submit(() -> {
@@ -124,9 +112,6 @@ public class DataRepository {
         });
     }
 
-
-
-
     public Future<List<SensorDataEntity>> getUnsyncedData() {
         ensureExecutorService();
         return executorService.submit(() -> {
@@ -134,7 +119,6 @@ public class DataRepository {
                 if (database == null || !database.isOpen()) {
                     throw new IllegalStateException("Database is not open");
                 }
-
 
                 List<SensorDataEntity> data = sensorDataDao.getUnsyncedData();
                 Timber.d("Retrieved %d unsynced records", data.size());
@@ -146,44 +130,25 @@ public class DataRepository {
         });
     }
 
-
-
-
     public Future<Integer> markAsSynced(final List<Long> ids) {
         ensureExecutorService();
         return executorService.submit(() -> {
             try {
                 Timber.d("Marking IDs as synced: %s", ids);
                 int updatedCount = sensorDataDao.markAsSynced(ids);
-
-
-
-
                 // Verificare imediată
                 List<SensorDataEntity> stillUnsynced = sensorDataDao.getUnsyncedData();
                 Timber.d("After marking as synced, found %d unsynced records",
                         stillUnsynced.size());
-
-
-
-
                 // Verificare specifică pentru ID-urile marcate
                 List<Long> stillUnsyncedIds = stillUnsynced.stream()
                         .map(SensorDataEntity::getId)
                         .filter(ids::contains)
                         .collect(Collectors.toList());
-
-
-
-
                 if (!stillUnsyncedIds.isEmpty()) {
                     Timber.e("Failed to mark IDs as synced: %s", stillUnsyncedIds);
                     throw new RuntimeException("Failed to mark all data as synced");
                 }
-
-
-
-
                 return updatedCount;
             } catch (Exception e) {
                 Timber.e(e, "Error marking data as synced");
@@ -191,9 +156,6 @@ public class DataRepository {
             }
         });
     }
-
-
-
 
     public Future<List<SensorDataEntity>> getByIds(final List<Long> ids) {
         ensureExecutorService();
@@ -210,9 +172,6 @@ public class DataRepository {
         });
     }
 
-
-
-
     public Future<Void> incrementUploadAttempts(final List<Long> ids) {
         ensureExecutorService();
         return executorService.submit(() -> {
@@ -220,9 +179,6 @@ public class DataRepository {
             return null;
         });
     }
-
-
-
 
     public Future<Void> cleanOldData(final long timestamp) {
         ensureExecutorService();
@@ -232,9 +188,6 @@ public class DataRepository {
         });
     }
 
-
-
-
     public Future<Void> clearAllData() {
         ensureExecutorService();
         return executorService.submit(() -> {
@@ -242,9 +195,6 @@ public class DataRepository {
             return null;
         });
     }
-
-
-
 
     public Future<Void> shutdown() {
         instanceLock.lock();
@@ -254,7 +204,6 @@ public class DataRepository {
             }
             isShutdown.set(true);
 
-
             return executorService.submit(() -> {
                 try {
                     if (executorService != null && !executorService.isShutdown()) {
@@ -263,8 +212,6 @@ public class DataRepository {
                             executorService.shutdownNow();
                         }
                     }
-
-
                     if (database != null && database.isOpen()) {
                         database.close();
                     }
@@ -279,7 +226,6 @@ public class DataRepository {
         }
     }
 
-
     private void shutdownNow() {
         try {
             if (executorService != null) {
@@ -293,9 +239,6 @@ public class DataRepository {
         }
     }
 
-
-
-
     public static synchronized void resetInstance() {
         synchronized (LOCK) {
             if (instance != null) {
@@ -307,16 +250,10 @@ public class DataRepository {
                             instance.executorService.shutdownNow();
                         }
                     }
-
-
                     // Așteptăm finalizarea operațiilor în curs
                     Thread.sleep(500);
-
-
                     // Închidem explicit baza de date
                     AppDatabase.closeDatabase();
-
-
                     instance = null;
                     Timber.d("Repository instance reset successfully");
                 } catch (Exception e) {

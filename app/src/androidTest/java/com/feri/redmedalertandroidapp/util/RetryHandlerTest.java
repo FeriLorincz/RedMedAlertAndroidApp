@@ -1,6 +1,5 @@
 package com.feri.redmedalertandroidapp.util;
 
-
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -13,23 +12,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-
-
-
 public class RetryHandlerTest {
-
 
     private RetryHandler retryHandler;
     @Mock
     private Callable<String> mockTask;
-
 
     @Before
     public void setup() {
         MockitoAnnotations.openMocks(this);
         retryHandler = new RetryHandler();
     }
-
 
     @Test
     public void executeWithRetry_shouldSucceedOnFirstTry() throws Exception {
@@ -41,7 +34,6 @@ public class RetryHandlerTest {
         assertEquals("success", result);
         verify(mockTask, times(1)).call();
     }
-
 
     @Test
     public void executeWithRetry_shouldRetryAndSucceed() throws Exception {
@@ -57,7 +49,6 @@ public class RetryHandlerTest {
         verify(mockTask, times(3)).call();
     }
 
-
     @Test(expected = RuntimeException.class)
     public void executeWithRetry_shouldFailAfterMaxRetries() throws Exception {
         // Arrange
@@ -65,7 +56,6 @@ public class RetryHandlerTest {
         // Act
         retryHandler.executeWithRetry(mockTask);
     }
-
 
     @Test
     public void splitIntoBatches_shouldCreateCorrectBatches() {
@@ -80,7 +70,6 @@ public class RetryHandlerTest {
         assertEquals(Arrays.asList(4, 5, 6), batches.get(1));
         assertEquals(Arrays.asList(7), batches.get(2));
     }
-
 
     @Test
     public void waitForRetry_shouldRespectExponentialBackoff() throws Exception {

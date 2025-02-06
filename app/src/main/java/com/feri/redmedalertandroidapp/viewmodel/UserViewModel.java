@@ -48,21 +48,26 @@ public class UserViewModel extends AndroidViewModel{
     }
 
     public void updateUser(User user, UpdateCallback callback) {
-        isLoading.setValue(true);
-        userRepository.updateUser(user.getIdUser(), user, new RepositoryCallback<User>() {
-            @Override
-            public void onSuccess(User result) {
-                isLoading.setValue(false);
-                callback.onSuccess();
-            }
+        if (user.getIdUser() == null) {
+            // Dacă nu avem ID, facem create în loc de update
+            createUser(user, callback);
+        } else {
+            isLoading.setValue(true);
+            userRepository.updateUser(user.getIdUser(), user, new RepositoryCallback<User>() {
+                @Override
+                public void onSuccess(User result) {
+                    isLoading.setValue(false);
+                    callback.onSuccess();
+                }
 
-            @Override
-            public void onError(String message) {
-                isLoading.setValue(false);
-                error.setValue(message);
-                callback.onError(message);
-            }
-        });
+                @Override
+                public void onError(String message) {
+                    isLoading.setValue(false);
+                    error.setValue(message);
+                    callback.onError(message);
+                }
+            });
+        }
     }
 
     public void createUser(User user, UpdateCallback callback) {

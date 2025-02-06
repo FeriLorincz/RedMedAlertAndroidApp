@@ -13,24 +13,31 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.feri.redmedalertandroidapp.R;
 import com.feri.redmedalertandroidapp.api.model.MedicalProfile;
+import com.feri.redmedalertandroidapp.api.model.Medication;
+import com.feri.redmedalertandroidapp.dashboard.adapters.MedicationsAdapter;
+import com.feri.redmedalertandroidapp.dashboard.dialogs.MedicationDialog;
 import com.feri.redmedalertandroidapp.viewmodel.MedicalProfileViewModel;
+import com.feri.redmedalertandroidapp.viewmodel.MedicationViewModel;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textfield.TextInputEditText;
 
-public class MedicalProfileFragment extends Fragment{
+public class MedicalProfileFragment extends Fragment implements MedicationsAdapter.OnMedicationClickListener {
 
     private MedicalProfileViewModel viewModel;
+    private MedicationViewModel medicationViewModel;
     private ChipGroup currentDiseasesChipGroup;
     private ChipGroup sensorConditionsChipGroup;
     private CheckBox athleticHistoryCheck;
     private TextInputLayout athleticHistoryLayout;
     private TextInputEditText athleticHistoryInput;
     private RecyclerView medicationsRecyclerView;
+    private MedicationsAdapter medicationsAdapter;
     private Button addMedicationButton;
     private Button addDiseaseButton;
     private CheckBox gdprConsentCheck;
@@ -42,6 +49,7 @@ public class MedicalProfileFragment extends Fragment{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(MedicalProfileViewModel.class);
+        medicationViewModel = new ViewModelProvider(requireActivity()).get(MedicationViewModel.class);
     }
 
     @Nullable
@@ -69,14 +77,26 @@ public class MedicalProfileFragment extends Fragment{
         emergencyEntryCheck = view.findViewById(R.id.emergencyEntryCheck);
         saveProfileButton = view.findViewById(R.id.saveProfileButton);
 
+        // Configurare RecyclerView pentru medicamente
+        medicationsAdapter = new MedicationsAdapter(this);
         medicationsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        // TODO: Set adapter for medications
+        medicationsRecyclerView.setAdapter(medicationsAdapter);
     }
 
     private void setupObservers() {
         viewModel.getCurrentProfile().observe(getViewLifecycleOwner(), this::populateFields);
 
         viewModel.getError().observe(getViewLifecycleOwner(), error -> {
+            if (error != null) {
+                Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show();
+            }
+        });
+
+        medicationViewModel.getMedications().observe(getViewLifecycleOwner(), medications -> {
+            medicationsAdapter.setMedications(medications);
+        });
+
+        medicationViewModel.getError().observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
                 Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show();
             }
@@ -118,8 +138,10 @@ public class MedicalProfileFragment extends Fragment{
         disclaimerCheck.setChecked(profile.isDisclaimerAccepted());
         emergencyEntryCheck.setChecked(profile.isEmergencyEntryPermission());
 
-        // Setup medications adapter
-        // ... cod pentru RecyclerView cu medicamente
+        // Încărcăm medicamentele pentru profil
+        if (profile.getIdMedicalProfile() != null) {
+            medicationViewModel.loadMedicationsForProfile(profile.getIdMedicalProfile());
+        }
     }
 
     private void addDiseaseChip(String disease) {
@@ -139,7 +161,6 @@ public class MedicalProfileFragment extends Fragment{
         chip.setCloseIconVisible(true);
         chip.setOnCloseIconClickListener(v -> {
             sensorConditionsChipGroup.removeView(chip);
-            // TODO: Update condition in ViewModel
         });
         sensorConditionsChipGroup.addView(chip);
     }
@@ -163,7 +184,41 @@ public class MedicalProfileFragment extends Fragment{
     }
 
     private void showAddMedicationDialog() {
-        // TODO: Implement medication dialog
+        MedicalProfile currentProfile = viewModel.getCurrentProfile().getValue();
+        if (currentProfile == null) {
+            Toast.makeText(requireContext(), "Eroare: Profilul medical nu este disponibil",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        MedicationDialog dialog = new MedicationDialog(
+                requireContext(),
+                medication -> {
+                    medicationViewModel.addMedication(
+                            currentProfile.getIdMedicalProfile(),
+                            medication,
+                            new MedicationViewModel.UpdateCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Toast.makeText(requireContext(),
+                                            "Medicament adăugat cu succes",
+                                            Toast.LENGTH_SHORT).show();
+                                    medicationViewModel.loadMedicationsForProfile(
+                                            currentProfile.getIdMedicalProfile());
+                                }
+
+                                @Override
+                                public void onError(String message) {
+                                    Toast.makeText(requireContext(),
+                                            "Eroare la adăugarea medicamentului: " + message,
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            }
+                    );
+                },
+                currentProfile
+        );
+        dialog.show(null);
     }
 
     private void saveProfile() {
@@ -179,13 +234,86 @@ public class MedicalProfileFragment extends Fragment{
         viewModel.updateProfile(currentProfile, new MedicalProfileViewModel.UpdateCallback() {
             @Override
             public void onSuccess() {
-                Toast.makeText(requireContext(), "Profilul medical a fost actualizat", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(),
+                        "Profilul medical a fost actualizat",
+                        Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(String message) {
-                Toast.makeText(requireContext(), "Eroare: " + message, Toast.LENGTH_LONG).show();
+                Toast.makeText(requireContext(),
+                        "Eroare: " + message,
+                        Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    public void onMedicationEdit(Medication medication) {
+        MedicalProfile currentProfile = viewModel.getCurrentProfile().getValue();
+        if (currentProfile == null) return;
+
+        MedicationDialog dialog = new MedicationDialog(
+                requireContext(),
+                updatedMedication -> {
+                    medicationViewModel.updateMedication(
+                            medication.getIdMedication(),
+                            updatedMedication,
+                            new MedicationViewModel.UpdateCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Toast.makeText(requireContext(),
+                                            "Medicament actualizat cu succes",
+                                            Toast.LENGTH_SHORT).show();
+                                    medicationViewModel.loadMedicationsForProfile(
+                                            currentProfile.getIdMedicalProfile());
+                                }
+
+                                @Override
+                                public void onError(String message) {
+                                    Toast.makeText(requireContext(),
+                                            "Eroare la actualizarea medicamentului: " + message,
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            }
+                    );
+                },
+                currentProfile
+        );
+        dialog.show(medication);
+    }
+
+    @Override
+    public void onMedicationDelete(Medication medication) {
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Ștergere medicament")
+                .setMessage("Sigur doriți să ștergeți acest medicament?")
+                .setPositiveButton("Da", (dialog, which) -> {
+                    medicationViewModel.deleteMedication(
+                            medication.getIdMedication(),
+                            new MedicationViewModel.UpdateCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Toast.makeText(requireContext(),
+                                            "Medicament șters cu succes",
+                                            Toast.LENGTH_SHORT).show();
+                                    MedicalProfile currentProfile = viewModel.getCurrentProfile().getValue();
+                                    if (currentProfile != null) {
+                                        medicationViewModel.loadMedicationsForProfile(
+                                                currentProfile.getIdMedicalProfile());
+                                    }
+                                }
+
+                                @Override
+                                public void onError(String message) {
+                                    Toast.makeText(requireContext(),
+                                            "Eroare la ștergerea medicamentului: " + message,
+                                            Toast.LENGTH_LONG).show();
+                                }
+                            }
+                    );
+                })
+                .setNegativeButton("Nu", null)
+                .show();
     }
 }
