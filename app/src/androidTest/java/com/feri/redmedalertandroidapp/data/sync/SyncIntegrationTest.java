@@ -1,6 +1,5 @@
 package com.feri.redmedalertandroidapp.data.sync;
 
-
 import com.feri.redmedalertandroidapp.data.DataRepository;
 import com.feri.redmedalertandroidapp.data.model.SensorDataEntity;
 import com.feri.redmedalertandroidapp.network.NetworkStateCallback;
@@ -10,8 +9,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -27,7 +24,6 @@ import timber.log.Timber;
 @RunWith(AndroidJUnit4.class)
 public class SyncIntegrationTest {
 
-
     private static final int TIMEOUT_SECONDS = 10;
     private Context context;
     private DataRepository repository;
@@ -35,38 +31,23 @@ public class SyncIntegrationTest {
     private CountDownLatch syncLatch;
     private TestNetworkStateMonitor testNetworkMonitor;
 
-
-
-
     // Implementare de test pentru NetworkStateMonitor
     private class TestNetworkStateMonitor extends NetworkStateMonitor {
         private boolean networkAvailable = true;
 
-
-
-
         public TestNetworkStateMonitor(Context context) {
             super(context);
         }
-
-
-
 
         @Override
         public boolean isNetworkAvailable() {
             return networkAvailable;
         }
 
-
-
-
         public void setNetworkAvailable(boolean available) {
             this.networkAvailable = available;
             notifyNetworkState(available);
         }
-
-
-
 
         @Override
         public void startMonitoring(NetworkStateCallback callback) {
@@ -74,47 +55,29 @@ public class SyncIntegrationTest {
             this.callback = callback;
         }
 
-
-
-
         @Override
         public void stopMonitoring() {
             this.callback = null;
         }
     }
 
-
-
-
     private class TestSyncManager extends SyncManager {
         private final CountDownLatch completionLatch;
-
-
-
 
         TestSyncManager(Context context, DataRepository repository, CountDownLatch latch) {
             super(context, repository);
             this.completionLatch = latch;
         }
 
-
-
-
         @Override
         protected NetworkStateMonitor createNetworkMonitor() {
             return testNetworkMonitor;
         }
 
-
-
-
         @Override
         protected void initializeNetworkMonitoring() {
             // Skip in tests
         }
-
-
-
 
         @Override
         public void startSync() {
@@ -126,28 +89,14 @@ public class SyncIntegrationTest {
         }
     }
 
-
-
-
     private boolean awaitSyncCompletion() throws Exception {
         int maxAttempts = 10;
         int waitTimeMs = 1000;
 
-
-
-
         for (int i = 0; i < maxAttempts; i++) {
             Thread.sleep(waitTimeMs);
-
-
-
-
             List<SensorDataEntity> unsyncedData = repository.getUnsyncedData()
                     .get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
-
-
-
-
             if (unsyncedData.isEmpty()) {
                 return true;
             }
@@ -155,12 +104,9 @@ public class SyncIntegrationTest {
         return false;
     }
 
-
     @Before
     public void setup() throws Exception {
         context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-
-
         // Cleanup any existing state
         try {
             DataRepository.resetInstance();
@@ -169,18 +115,12 @@ public class SyncIntegrationTest {
         } catch (Exception e) {
             Timber.e(e, "Error during cleanup");
         }
-
-
         repository = DataRepository.getInstance(context);
-
-
         // Verify repository is properly initialized
         RetryHandler retryHandler = new RetryHandler();
         retryHandler.executeWithRetry(() -> {
             Future<Void> clearFuture = repository.clearAllData();
             clearFuture.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
-
-
             // Verify database is accessible
             Future<List<SensorDataEntity>> checkFuture = repository.getUnsyncedData();
             List<SensorDataEntity> checkData = checkFuture.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
@@ -203,15 +143,11 @@ public class SyncIntegrationTest {
         // Disable network initially
         testNetworkMonitor.setNetworkAvailable(false);
         Thread.sleep(500);
-
-
         // Clear data with retry
         RetryHandler retryHandler = new RetryHandler();
         retryHandler.executeWithRetry(() -> {
             repository.clearAllData().get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
             Thread.sleep(500);
-
-
             // Verify clear
             List<SensorDataEntity> checkData = repository.getUnsyncedData()
                     .get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
@@ -220,8 +156,6 @@ public class SyncIntegrationTest {
             }
             return null;
         });
-
-
         // Create test data
         SensorDataEntity testData = new SensorDataEntity(
                 "test-device",
@@ -234,17 +168,12 @@ public class SyncIntegrationTest {
         testData.setSynced(false);
         testData.setUploadAttempts(0);
 
-
         // Save with explicit verification
         Long savedId = retryHandler.executeWithRetry(() -> {
             Future<Long> saveFuture = repository.saveSensorData(testData);
             Long id = saveFuture.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
             Timber.d("Data saved with ID: %d", id);
-
-
             Thread.sleep(2000);
-
-
             // Verificare directă după ID
             List<SensorDataEntity> verification = repository.getByIds(Arrays.asList(id))
                     .get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
@@ -252,38 +181,27 @@ public class SyncIntegrationTest {
                 throw new RuntimeException("Data not found by ID after save");
             }
 
-
             // Verificare separată pentru unsynced data
             List<SensorDataEntity> unsyncedData = repository.getUnsyncedData()
                     .get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
             if (unsyncedData.isEmpty()) {
                 throw new RuntimeException("Data not found in unsynced after save");
             }
-
-
             return id;
         });
-
-
         assertTrue("Data should be saved successfully", savedId > 0);
         Thread.sleep(1000);
-
 
         // Verify initial state with better error handling
         int retryCount = 0;
         boolean initialStateVerified = false;
         String verificationError = "";
 
-
         while (!initialStateVerified && retryCount < 5) {
             try {
                 List<SensorDataEntity> initialData = repository.getUnsyncedData()
                         .get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
-
-
                 Timber.d("Found %d unsynced records", initialData.size());
-
-
                 if (initialData.size() == 1) {
                     SensorDataEntity savedEntity = initialData.get(0);
                     if (!testData.getDeviceId().equals(savedEntity.getDeviceId())) {
@@ -306,28 +224,20 @@ public class SyncIntegrationTest {
                 verificationError = "Error checking initial state: " + e.getMessage();
                 Timber.e(e, "Verification attempt %d failed", retryCount);
             }
-
-
             if (!initialStateVerified) {
                 retryCount++;
                 Thread.sleep(1000);
             }
         }
-
-
         assertTrue("Initial state verification failed: " + verificationError,
                 initialStateVerified);
-
-
         // Enable network and continue with sync
         testNetworkMonitor.setNetworkAvailable(true);
         Thread.sleep(1000);
 
-
         syncManager.startSync();
         assertTrue("Sync latch wait failed",
                 syncLatch.await(TIMEOUT_SECONDS, TimeUnit.SECONDS));
-
 
         // Verify sync completion with retry
         boolean syncCompleted = awaitSyncCompletion();
@@ -335,16 +245,10 @@ public class SyncIntegrationTest {
     }
 
 
-
-
     @Test
     public void testOfflineSync() throws Exception {
         // Set network as unavailable
         testNetworkMonitor.setNetworkAvailable(false);
-
-
-
-
         // Create and save test data
         SensorDataEntity testData = new SensorDataEntity(
                 "test-device",
@@ -354,31 +258,16 @@ public class SyncIntegrationTest {
                 "BPM",
                 System.currentTimeMillis()
         );
-
-
-
-
         // Save data locally
         repository.saveSensorData(testData).get(5, TimeUnit.SECONDS);
         Thread.sleep(500);
-
-
-
-
         // Try to sync
         syncManager.startSync();
-
-
-
-
         // Verify data still exists locally
         List<SensorDataEntity> unsyncedData = repository.getUnsyncedData()
                 .get(5, TimeUnit.SECONDS);
         assertEquals("Data should still be unsynced", 1, unsyncedData.size());
     }
-
-
-
 
     @After
     public void cleanup() {
@@ -387,18 +276,11 @@ public class SyncIntegrationTest {
                 syncManager.shutdown();
                 Thread.sleep(1000);
             }
-
-
-
-
             if (repository != null) {
                 RetryHandler retryHandler = new RetryHandler();
                 retryHandler.executeWithRetry(() -> {
                     repository.clearAllData().get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
                     Thread.sleep(500);
-
-
-
 
                     Future<Void> shutdownFuture = repository.shutdown();
                     shutdownFuture.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
@@ -417,9 +299,6 @@ public class SyncIntegrationTest {
             }
         }
     }
-
-
-
 
 
 

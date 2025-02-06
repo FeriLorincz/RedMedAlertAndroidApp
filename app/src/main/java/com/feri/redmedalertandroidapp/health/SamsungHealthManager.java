@@ -23,6 +23,7 @@ public class SamsungHealthManager {
     private Set<HealthPermissionManager.PermissionKey> permissionKeys;
     private HealthConnectionCallback connectionCallback;
     private HealthMonitoringService monitoringService;
+    private boolean isConnected = false;
 
     public SamsungHealthManager(Context context) {
         this.context = context;
@@ -65,6 +66,22 @@ public class SamsungHealthManager {
                 "com.samsung.health.oxygen_saturation",
                 HealthPermissionManager.PermissionType.READ
         ));
+
+        // Adăugăm permisiuni pentru alți senzori
+        permissionKeys.add(new HealthPermissionManager.PermissionKey(
+                "com.samsung.health.step_count",
+                HealthPermissionManager.PermissionType.READ
+        ));
+
+        permissionKeys.add(new HealthPermissionManager.PermissionKey(
+                "com.samsung.health.sleep",
+                HealthPermissionManager.PermissionType.READ
+        ));
+
+        permissionKeys.add(new HealthPermissionManager.PermissionKey(
+                "com.samsung.health.stress",
+                HealthPermissionManager.PermissionType.READ
+        ));
     }
 
     public void requestPermissions(Activity activity) {
@@ -95,15 +112,21 @@ public class SamsungHealthManager {
     }
 
     public void connect() {
-        if (mStore != null) {
+        if (mStore != null && !isConnected) {
             mStore.connectService();
         }
     }
 
     public void disconnect() {
         if (mStore != null) {
+            stopMonitoring(context);
             mStore.disconnectService();
+            isConnected = false;
         }
+    }
+
+    public boolean isConnected() {
+        return isConnected;
     }
 
     private final HealthDataStore.ConnectionListener connectionListener =
@@ -111,22 +134,25 @@ public class SamsungHealthManager {
                 @Override
                 public void onConnected() {
                     Log.d(TAG, "Connected to Samsung Health");
+                    isConnected = true;
                     if (connectionCallback != null) {
                         connectionCallback.onConnected();
                     }
                 }
 
                 @Override
-                public void onConnectionFailed(HealthConnectionErrorResult error) { // Modificat tipul parametrului
+                public void onConnectionFailed(HealthConnectionErrorResult error) {
                     Log.e(TAG, "Connection to Samsung Health failed: " + error.toString());
+                    isConnected = false;
                     if (connectionCallback != null) {
-                        connectionCallback.onConnectionFailed(error); // Actualizăm și interfața
+                        connectionCallback.onConnectionFailed(error);
                     }
                 }
 
                 @Override
                 public void onDisconnected() {
                     Log.d(TAG, "Disconnected from Samsung Health");
+                    isConnected = false;
                     if (connectionCallback != null) {
                         connectionCallback.onDisconnected();
                     }
@@ -138,12 +164,14 @@ public class SamsungHealthManager {
     }
 
     public void startMonitoring(Context context) {
-        if (mStore != null) {  // Verificăm doar dacă mStore există
+        if (mStore != null && isConnected) {
             Intent serviceIntent = new Intent(context, HealthMonitoringService.class);
             context.startService(serviceIntent);
 
             monitoringService = new HealthMonitoringService();
             monitoringService.startMonitoring(mStore);
+        } else {
+            Log.e(TAG, "Cannot start monitoring: Health store is null or not connected");
         }
     }
 

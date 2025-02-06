@@ -35,21 +35,16 @@ import timber.log.Timber;
 
 public class DatabaseUploader {
 
-
     private static final int MAX_BATCH_SIZE = 100;
     private static final int MAX_RETRY_ATTEMPTS = 5;
     private static final long UPLOAD_INTERVAL_MINUTES = 15;
     private static final int TIMEOUT_SECONDS = 30;
     private static final int SYNC_TIMEOUT_SECONDS = 60;
 
-
-
-
     private final Context context;
     private final DataRepository dataRepository;
     private final SensorDataApi sensorDataApi;
     private final NetworkStateMonitor networkMonitor;
-
 
     public DatabaseUploader(Context context, DataRepository dataRepository) {
         this.context = context;
@@ -57,27 +52,22 @@ public class DatabaseUploader {
         this.networkMonitor = createNetworkMonitor();
         this.sensorDataApi = createSensorApi();
 
-
         schedulePeriodicUpload();
     }
-
 
     protected NetworkStateMonitor createNetworkMonitor() {
         return new NetworkStateMonitor(context);
     }
 
-
     protected SensorDataApi createSensorApi() {
         return NetworkModule.getInstance().getSensorDataApi();
     }
-
 
     protected void schedulePeriodicUpload() {
         Constraints constraints = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .setRequiresBatteryNotLow(true)
                 .build();
-
 
         PeriodicWorkRequest uploadWorkRequest = new PeriodicWorkRequest.Builder(
                 DatabaseUploadWorker.class,
@@ -86,10 +76,8 @@ public class DatabaseUploader {
                 .setConstraints(constraints)
                 .build();
 
-
         WorkManager.getInstance(context).enqueue(uploadWorkRequest);
     }
-
 
     public boolean uploadPendingData() {
         if (!isNetworkAvailable()) {
@@ -97,18 +85,13 @@ public class DatabaseUploader {
             return false;
         }
 
-
         try {
             Future<List<SensorDataEntity>> futureSensorData = dataRepository.getUnsyncedData();
             List<SensorDataEntity> unsyncedData = futureSensorData.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
-
-
             if (unsyncedData.isEmpty()) {
                 Timber.d("No unsynced data to upload");
                 return true;
             }
-
-
             List<List<SensorDataEntity>> batches = createBatches(unsyncedData);
             boolean allSuccess = true;
             for (List<SensorDataEntity> batch : batches) {
@@ -124,7 +107,6 @@ public class DatabaseUploader {
         }
     }
 
-
     private List<List<SensorDataEntity>> createBatches(List<SensorDataEntity> data) {
         List<List<SensorDataEntity>> batches = new ArrayList<>();
         for (int i = 0; i < data.size(); i += MAX_BATCH_SIZE) {
@@ -134,17 +116,13 @@ public class DatabaseUploader {
         return batches;
     }
 
-
     private boolean uploadBatch(List<SensorDataEntity> batch) {
         if (batch == null || batch.isEmpty()) {
             return true;
         }
-
-
         try {
             Call<Void> call = sensorDataApi.uploadSensorData(batch);
             Response<Void> response;
-
 
             try {
                 response = call.execute();
@@ -154,23 +132,19 @@ public class DatabaseUploader {
                 return false;
             }
 
-
             if (!response.isSuccessful()) {
                 Timber.e("Upload failed with code: %d", response.code());
                 handleUploadError(batch);
                 return false;
             }
 
-
             try {
                 List<Long> uploadedIds = batch.stream()
                         .map(SensorDataEntity::getId)
                         .collect(Collectors.toList());
 
-
                 int markedCount = dataRepository.markAsSynced(uploadedIds)
                         .get(SYNC_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-
 
                 if (markedCount != uploadedIds.size()) {
                     handleUploadError(batch);
@@ -181,8 +155,6 @@ public class DatabaseUploader {
                 handleUploadError(batch);
                 return false;
             }
-
-
             return true;
         } catch (Exception e) {
             Timber.e(e, "Error during batch upload");
@@ -191,24 +163,18 @@ public class DatabaseUploader {
         }
     }
 
-
     private boolean markAsSynced(List<SensorDataEntity> batch) {
         List<Long> uploadedIds = batch.stream()
                 .map(SensorDataEntity::getId)
                 .collect(Collectors.toList());
-
-
         try {
             int markedCount = dataRepository.markAsSynced(uploadedIds)
                     .get(SYNC_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-
 
             if (markedCount != uploadedIds.size()) {
                 handleUploadError(batch);
                 return false;
             }
-
-
             return true;
         } catch (Exception e) {
             Timber.e(e, "Error marking data as synced");
@@ -216,7 +182,6 @@ public class DatabaseUploader {
             return false;
         }
     }
-
 
     private void handleUploadError(List<SensorDataEntity> batch) {
         List<Long> ids = new ArrayList<>();
@@ -239,7 +204,6 @@ public class DatabaseUploader {
     private boolean isNetworkAvailable() {
         return networkMonitor.isNetworkAvailable();
     }
-
 
     public void cleanOldData() {
         try {

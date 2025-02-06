@@ -92,28 +92,186 @@
             android:text="Adresă"
             android:textStyle="bold"
             android:textSize="18sp"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"/>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/cityLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/cityInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Oraș" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/villageLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/villageInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Sat" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Adăugăm restul câmpurilor pentru adresă -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/streetLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:hint="Stradă">
-
+            android:layout_marginBottom="8dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/streetInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text" />
+                android:hint="Stradă" />
+        </com.google.android.material.textfield.TextInputLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/numberLayout"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/numberInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Număr" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/buildingLayout"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/buildingInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Bloc" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/staircaseLayout"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/staircaseInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Scara" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/floorLayout"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/floorInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Etaj" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/apartmentLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/apartmentInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Apartament" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/postalCodeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/postalCodeInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Cod Poștal" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/countyLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/countyInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Județ" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/stateLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/stateInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Stat" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/countryLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/countryInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Țară" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nearestAmbulanceLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nearestAmbulanceInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Cel mai apropiat oraș cu ambulanță" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/saveButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:text="Salvează" />
 
     </LinearLayout>

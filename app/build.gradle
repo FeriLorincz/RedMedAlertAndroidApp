@@ -9,6 +9,9 @@ android {
     namespace 'com.feri.redmedalertandroidapp'
     compileSdk 34
 
+    buildFeatures {
+        viewBinding true
+    }
 
 
 

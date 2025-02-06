@@ -38,10 +38,8 @@ public class DatabaseUploaderTest {
     private TestNetworkStateMonitor networkMonitor;
     private SensorDataApi mockApi;
 
-
     private static class TestNetworkStateMonitor extends NetworkStateMonitor {
         private boolean networkAvailable = true;
-
 
         public TestNetworkStateMonitor(Context context) {
             super(context);
@@ -51,17 +49,14 @@ public class DatabaseUploaderTest {
             return networkAvailable;
         }
 
-
         public void setNetworkAvailable(boolean available) {
             this.networkAvailable = available;
         }
     }
 
-
     private static class TestSensorDataApi implements SensorDataApi {
         private boolean shouldFail = false;
         private boolean throwingCall = false;
-
 
         public void setShouldFail(boolean shouldFail) {
             this.shouldFail = shouldFail;
@@ -75,11 +70,9 @@ public class DatabaseUploaderTest {
         }
     }
 
-
     private static class TestCall implements Call<Void> {
         private final boolean shouldFail;
         private final boolean throwing;
-
 
         TestCall(boolean shouldFail, boolean throwing) {
             this.shouldFail = shouldFail;
@@ -131,7 +124,6 @@ public class DatabaseUploaderTest {
         }
     }
 
-
     @Before
     public void setup() {
         context = InstrumentationRegistry.getInstrumentation().getTargetContext();
@@ -167,7 +159,6 @@ public class DatabaseUploaderTest {
         };
     }
 
-
     @After
     public void cleanup() {
         try {
@@ -191,7 +182,6 @@ public class DatabaseUploaderTest {
         }
     }
 
-
     @Test
     public void uploadPendingData_whenNoNetwork_shouldSkipUpload() throws Exception {
         // Arrange
@@ -208,7 +198,6 @@ public class DatabaseUploaderTest {
         assertEquals("Data should remain unsynced", 1, unsyncedData.size());
     }
 
-
     @Test
     public void uploadPendingData_whenNoData_shouldSkipUpload() throws Exception {
         // Act
@@ -216,7 +205,6 @@ public class DatabaseUploaderTest {
         // Assert
         assertTrue(result);
     }
-
 
     @Test
     public void uploadPendingData_whenSuccess_shouldMarkAsSynced() throws Exception {
@@ -235,7 +223,6 @@ public class DatabaseUploaderTest {
                 .get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
         assertTrue("Data should be marked as synced", unsyncedData.isEmpty());
     }
-
 
     @Test
     public void uploadPendingData_whenError_shouldIncrementAttempts() throws Exception {
@@ -274,7 +261,6 @@ public class DatabaseUploaderTest {
         assertEquals("Should still have unsynced data", 1, unsyncedData.size());
         assertEquals("Upload attempts should be incremented", 1, unsyncedData.get(0).getUploadAttempts());
     }
-
 
     private SensorDataEntity createTestEntity() {
         SensorDataEntity entity = new SensorDataEntity(
