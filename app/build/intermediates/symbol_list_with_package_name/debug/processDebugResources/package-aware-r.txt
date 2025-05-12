@@ -3200,6 +3200,9 @@ id btnContinue
 id btnDashboard
 id btnLogout
 id btnNotificationSettings
+id btnSaveConfig
+id btnServerConfig
+id btnTestConnection
 id buildingInput
 id buildingLayout
 id buttonContainer
@@ -3305,6 +3308,7 @@ id end
 id endToStart
 id enterAlways
 id enterAlwaysCollapsed
+id etServerUrl
 id exitUntilCollapsed
 id expand_activities_button
 id expanded_menu
@@ -3567,6 +3571,7 @@ id select_dialog_listview
 id selected
 id selection_type
 id sensorConditionsChipGroup
+id sensorDataText
 id sensorTestButton
 id sharedValueSet
 id sharedValueUnset
@@ -3825,6 +3830,7 @@ layout activity_notification_settings
 layout activity_register
 layout activity_reset_password
 layout activity_sensor_test
+layout activity_server_config
 layout activity_splash
 layout activity_test
 layout activity_user_data_completion

@@ -2,11 +2,11 @@ package com.feri.redmedalertandroidapp.auth.model;
 
 public class AuthenticationRequest {
 
-    private String username;
+    private String email;
     private String password;
 
-    public AuthenticationRequest(String username, String password) {
-        this.username = username;
+    public AuthenticationRequest(String email, String password) {
+        this.email = email;
         this.password = password;
     }
 
@@ -14,12 +14,12 @@ public class AuthenticationRequest {
     public AuthenticationRequest() {
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {

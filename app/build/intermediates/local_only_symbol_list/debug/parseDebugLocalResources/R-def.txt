@@ -33,6 +33,9 @@ id btnContinue
 id btnDashboard
 id btnLogout
 id btnNotificationSettings
+id btnSaveConfig
+id btnServerConfig
+id btnTestConnection
 id buildingInput
 id buildingLayout
 id buttonContainer
@@ -58,6 +61,7 @@ id editButton
 id emailInput
 id emailLayout
 id emergencyEntryCheck
+id etServerUrl
 id fallDetectionText
 id fallDetectionValue
 id finishButton
@@ -111,6 +115,7 @@ id rotationValue
 id saveButton
 id saveProfileButton
 id sensorConditionsChipGroup
+id sensorDataText
 id sensorTestButton
 id skipButton
 id sleepValue
@@ -148,6 +153,7 @@ layout activity_notification_settings
 layout activity_register
 layout activity_reset_password
 layout activity_sensor_test
+layout activity_server_config
 layout activity_splash
 layout activity_test
 layout activity_user_data_completion

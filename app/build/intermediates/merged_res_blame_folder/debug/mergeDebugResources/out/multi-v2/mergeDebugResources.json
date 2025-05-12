@@ -1013,10 +1013,10 @@
                     "from": {
                         "startLines": "3,16,19",
                         "startColumns": "4,4,4",
-                        "startOffsets": "139,802,949",
+                        "startOffsets": "142,818,968",
                         "endLines": "14,16,22",
                         "endColumns": "12,90,12",
-                        "endOffsets": "796,888,1113"
+                        "endOffsets": "810,904,1135"
                     },
                     "to": {
                         "startLines": "2543,6525,6526",

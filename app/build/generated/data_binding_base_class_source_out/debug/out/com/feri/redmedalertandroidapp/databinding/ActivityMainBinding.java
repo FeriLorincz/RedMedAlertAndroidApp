@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
@@ -32,21 +33,30 @@ public final class ActivityMainBinding implements ViewBinding {
   public final Button btnNotificationSettings;
 
   @NonNull
+  public final Button btnServerConfig;
+
+  @NonNull
   public final LinearLayout main;
+
+  @NonNull
+  public final TextView sensorDataText;
 
   @NonNull
   public final View watchStatusIndicator;
 
   private ActivityMainBinding(@NonNull LinearLayout rootView, @NonNull Button btnConnectWatch,
       @NonNull Button btnDashboard, @NonNull Button btnLogout,
-      @NonNull Button btnNotificationSettings, @NonNull LinearLayout main,
+      @NonNull Button btnNotificationSettings, @NonNull Button btnServerConfig,
+      @NonNull LinearLayout main, @NonNull TextView sensorDataText,
       @NonNull View watchStatusIndicator) {
     this.rootView = rootView;
     this.btnConnectWatch = btnConnectWatch;
     this.btnDashboard = btnDashboard;
     this.btnLogout = btnLogout;
     this.btnNotificationSettings = btnNotificationSettings;
+    this.btnServerConfig = btnServerConfig;
     this.main = main;
+    this.sensorDataText = sensorDataText;
     this.watchStatusIndicator = watchStatusIndicator;
   }
 
@@ -101,7 +111,19 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.btnServerConfig;
+      Button btnServerConfig = ViewBindings.findChildViewById(rootView, id);
+      if (btnServerConfig == null) {
+        break missingId;
+      }
+
       LinearLayout main = (LinearLayout) rootView;
+
+      id = R.id.sensorDataText;
+      TextView sensorDataText = ViewBindings.findChildViewById(rootView, id);
+      if (sensorDataText == null) {
+        break missingId;
+      }
 
       id = R.id.watchStatusIndicator;
       View watchStatusIndicator = ViewBindings.findChildViewById(rootView, id);
@@ -110,7 +132,8 @@ public final class ActivityMainBinding implements ViewBinding {
       }
 
       return new ActivityMainBinding((LinearLayout) rootView, btnConnectWatch, btnDashboard,
-          btnLogout, btnNotificationSettings, main, watchStatusIndicator);
+          btnLogout, btnNotificationSettings, btnServerConfig, main, sensorDataText,
+          watchStatusIndicator);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

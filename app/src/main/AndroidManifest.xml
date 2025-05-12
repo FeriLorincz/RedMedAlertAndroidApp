@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Samsung Health Permissions -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="s" />
     <uses-permission android:name="android.permission.BODY_SENSORS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="com.samsung.android.health.permission.read" />
     <uses-permission android:name="com.samsung.android.health.permission.write" />
-    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
-    <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="true" />
+    <uses-permission android:name="com.samsung.android.sdk.health.permission.read" />
+    <uses-permission android:name="com.samsung.android.sdk.health.permission.write" />
     <uses-permission android:name="android.permission.BODY_SENSORS_BACKGROUND"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
+    <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="true" />
 
     <queries>
         <package android:name="com.samsung.android.health" />
@@ -45,7 +53,7 @@
             android:exported="false" />
 
         <activity android:name=".TestActivity"
-                  android:exported="false" />
+            android:exported="false" />
 
         <activity
             android:name=".SensorTestActivity"
@@ -76,14 +84,28 @@
             android:name=".dashboard.DashboardActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".settings.ServerConfigActivity"
+            android:exported="false"
+            android:label="Configurare Server" />
+
         <service
             android:name=".health.HealthMonitoringService"
             android:exported="false" />
+
+        <!-- Samsung Health SDK metadata -->
+        <meta-data
+            android:name="com.samsung.health.sdk.AppId"
+            android:value="com.feri.redmedalertandroidapp" />
 
         <!-- Samsung Health App ID -->
         <meta-data
             android:name="com.samsung.android.health.permission.read"
             android:value="com.feri.redmedalertandroidapp" />
+
+        <meta-data
+            android:name="com.samsung.health.sdk.HealthProviderAuthService"
+            android:value=".health.HealthProviderAuthService" />
     </application>
 
 </manifest>

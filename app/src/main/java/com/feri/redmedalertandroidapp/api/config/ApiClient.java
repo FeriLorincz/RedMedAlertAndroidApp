@@ -9,10 +9,11 @@ import android.util.Base64;
 import android.util.Log;
 
 
-
-
+import com.feri.redmedalertandroidapp.api.RetrofitClient;
+import com.feri.redmedalertandroidapp.api.dto.SensorDataDTO;
 import com.feri.redmedalertandroidapp.api.model.HealthDataPayload;
 import com.feri.redmedalertandroidapp.api.service.ApiCallback;
+import com.feri.redmedalertandroidapp.api.service.ApiService;
 import com.feri.redmedalertandroidapp.api.service.HealthDataApiService;
 import com.feri.redmedalertandroidapp.api.validator.HealthDataValidator;
 import com.feri.redmedalertandroidapp.network.SensorDataApi;
@@ -21,6 +22,10 @@ import com.feri.redmedalertandroidapp.notification.NotificationService;
 import android.annotation.SuppressLint;
 import android.os.Build;
 import android.provider.Settings;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
@@ -110,29 +115,27 @@ public class ApiClient {
 
     // Metodă completă pentru upload date cu callback
     public void uploadHealthData(Map<String, Double> data, ApiCallback callback) {
-        if (!HealthDataValidator.isValidData(data)) {
-            if (callback != null) {
-                callback.onError("Invalid data values");
-            }
-            return;
+        String deviceId = getDeviceInfo().getDeviceId();
+        String userId = getUserInfo().getUserId();
+
+        List<SensorDataDTO> sensorDataList = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+
+        for (Map.Entry<String, Double> entry : data.entrySet()) {
+            SensorDataDTO sensorData = new SensorDataDTO(
+                    deviceId,
+                    userId,
+                    entry.getKey(),
+                    entry.getValue(),
+                    now
+            );
+            sensorDataList.add(sensorData);
         }
 
-
-        HealthDataPayload payload;
-        if (BuildConfig.DEBUG) {
-            // În modul debug/test
-            payload = new HealthDataPayload("test-device", "test-user", data);
-        } else {
-            // În producție
-            String deviceId = getDeviceInfo().getDeviceId();
-            String userId = getUserInfo().getUserId();
-            payload = new HealthDataPayload(deviceId, userId, data);
-        }
-
-
-        apiService.testHealthData(payload).enqueue(new Callback<Void>() {
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+        apiService.uploadBatchSensorData(sensorDataList).enqueue(new Callback<List<SensorDataDTO>>() {
             @Override
-            public void onResponse(Call<Void> call, retrofit2.Response<Void> response) {
+            public void onResponse(Call<List<SensorDataDTO>> call, retrofit2.Response<List<SensorDataDTO>> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "Data uploaded successfully");
                     notificationService.showDataUploadNotification(true);
@@ -145,9 +148,8 @@ public class ApiClient {
                 }
             }
 
-
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<List<SensorDataDTO>> call, Throwable t) {
                 String error = "Upload failed: " + t.getMessage();
                 Log.e(TAG, error, t);
                 notificationService.showDataUploadNotification(false);

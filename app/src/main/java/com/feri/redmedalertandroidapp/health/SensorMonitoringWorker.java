@@ -1,6 +1,7 @@
 package com.feri.redmedalertandroidapp.health;
 
 import android.content.Context;
+import androidx.annotation.NonNull;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -17,6 +18,7 @@ import androidx.work.WorkerParameters;
 import com.feri.redmedalertandroidapp.api.config.ApiClient;
 import com.feri.redmedalertandroidapp.api.service.ApiCallback;
 import com.feri.redmedalertandroidapp.api.service.DatabaseHelper;
+import com.samsung.android.sdk.healthdata.HealthConnectionErrorResult;
 import com.samsung.android.sdk.healthdata.HealthDataStore;
 
 import java.util.Map;
@@ -24,14 +26,13 @@ import java.util.concurrent.TimeUnit;
 
 public class SensorMonitoringWorker extends Worker {
 
-    private final HealthDataStore healthDataStore;
-
     private static final String TAG = "SensorMonitoringWorker";
     private static final long NORMAL_INTERVAL = 5 * 60 * 1000; // 5 minute
     private static final long ALERT_INTERVAL = 30 * 1000;      // 30 secunde
     private static final int LOW_BATTERY_THRESHOLD = 15;       // 15%
 
     private final Context context;
+    private final HealthDataStore healthDataStore;
     private final HealthDataReader healthDataReader;
     private final BatteryManager batteryManager;
 
@@ -40,7 +41,27 @@ public class SensorMonitoringWorker extends Worker {
             @NonNull WorkerParameters params) {
         super(context, params);
         this.context = context;
-        this.healthDataStore = new HealthDataStore(context, null); // vom adăuga listener-ul potrivit
+
+        // Implementăm un listener obligatoriu pentru HealthDataStore
+        HealthDataStore.ConnectionListener connectionListener = new HealthDataStore.ConnectionListener() {
+            @Override
+            public void onConnected() {
+                Log.d(TAG, "Connected to Samsung Health from worker");
+            }
+
+            @Override
+            public void onConnectionFailed(HealthConnectionErrorResult error) {
+                Log.e(TAG, "Connection to Samsung Health failed: " + error.toString());
+            }
+
+            @Override
+            public void onDisconnected() {
+                Log.d(TAG, "Disconnected from Samsung Health");
+            }
+        };
+
+        // Inițializăm HealthDataStore cu listener-ul
+        this.healthDataStore = new HealthDataStore(context, connectionListener);
         this.healthDataReader = new HealthDataReader(healthDataStore);
         this.batteryManager = (BatteryManager) context.getSystemService(Context.BATTERY_SERVICE);
     }
@@ -49,6 +70,9 @@ public class SensorMonitoringWorker extends Worker {
     @Override
     public Result doWork() {
         try {
+            // Conectăm serviciul înainte de a-l folosi
+            healthDataStore.connectService();
+
             // Verificăm nivelul bateriei
             int batteryLevel = getBatteryLevel();
             long interval = determineInterval(batteryLevel);
@@ -58,6 +82,9 @@ public class SensorMonitoringWorker extends Worker {
 
             // Programăm următoarea rulare
             scheduleNextRun(interval);
+
+            // Deconectăm serviciul când am terminat
+            healthDataStore.disconnectService();
 
             return Result.success();
         } catch (Exception e) {
