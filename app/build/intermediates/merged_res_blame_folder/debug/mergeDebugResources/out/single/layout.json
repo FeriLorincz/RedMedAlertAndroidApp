@@ -48,6 +48,10 @@
         "source": "com.feri.redmedalertandroidapp-main-40:/layout/activity_splash.xml"
     },
     {
+        "merged": "com.feri.redmedalertandroidapp-mergeDebugResources-37:/layout/activity_server_config.xml",
+        "source": "com.feri.redmedalertandroidapp-main-40:/layout/activity_server_config.xml"
+    },
+    {
         "merged": "com.feri.redmedalertandroidapp-mergeDebugResources-37:/layout/activity_user_data_completion.xml",
         "source": "com.feri.redmedalertandroidapp-main-40:/layout/activity_user_data_completion.xml"
     },

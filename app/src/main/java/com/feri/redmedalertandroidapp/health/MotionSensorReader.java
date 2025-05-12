@@ -27,6 +27,7 @@ public class MotionSensorReader implements SensorEventListener {
     }
 
     public MotionSensorReader(Context context) {
+        Log.d(TAG, "Initializare MotionSensorReader");
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
@@ -34,6 +35,8 @@ public class MotionSensorReader implements SensorEventListener {
 
         if (accelerometer == null || gyroscope == null) {
             Log.e(TAG, "Motion sensors not available on this device");
+        } else {
+            Log.d(TAG, "Motion sensors initialized successfully");
         }
     }
 

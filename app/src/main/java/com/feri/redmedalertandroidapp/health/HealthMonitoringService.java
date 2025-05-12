@@ -78,19 +78,22 @@ public class HealthMonitoringService extends Service{
         healthDataReader = new HealthDataReader(healthDataStore);
         isMonitoring = true;
 
-        // Pornim citirea datelor de la senzorii de mișcare
-        motionSensorReader.startReading(new MotionSensorReader.MotionDataListener() {
-            @Override
-            public void onMotionDataReceived(Map<String, Double[]> motionData) {
-                // Procesăm datele de la senzori
-                processMotionData(motionData);
-            }
+        // Verificăm dacă motionSensorReader există înainte de a-l folosi
+        if (motionSensorReader != null) {
+            motionSensorReader.startReading(new MotionSensorReader.MotionDataListener() {
+                @Override
+                public void onMotionDataReceived(Map<String, Double[]> motionData) {
+                    processMotionData(motionData);
+                }
 
-            @Override
-            public void onMotionError(String message) {
-                Log.e(TAG, "Motion sensor error: " + message);
-            }
-        });
+                @Override
+                public void onMotionError(String message) {
+                    Log.e(TAG, "Motion sensor error: " + message);
+                }
+            });
+        } else {
+            Log.e(TAG, "MotionSensorReader is null!");
+        }
 
         startDataReading();
     }

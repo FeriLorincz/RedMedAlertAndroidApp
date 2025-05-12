@@ -8,6 +8,10 @@
         "source": "com.feri.redmedalertandroidapp-main-40:/drawable/ic_heart_notification.xml"
     },
     {
+        "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_activity_server_config.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-40:/layout/activity_server_config.xml"
+    },
+    {
         "merged": "com.feri.redmedalertandroidapp-debug-38:/layout_activity_sensor_test.xml.flat",
         "source": "com.feri.redmedalertandroidapp-main-40:/layout/activity_sensor_test.xml"
     },
