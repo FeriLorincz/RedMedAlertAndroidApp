@@ -33,6 +33,9 @@ public final class ActivityMainBinding implements ViewBinding {
   public final Button btnNotificationSettings;
 
   @NonNull
+  public final Button btnSamsungHealthSettings;
+
+  @NonNull
   public final Button btnServerConfig;
 
   @NonNull
@@ -46,14 +49,15 @@ public final class ActivityMainBinding implements ViewBinding {
 
   private ActivityMainBinding(@NonNull LinearLayout rootView, @NonNull Button btnConnectWatch,
       @NonNull Button btnDashboard, @NonNull Button btnLogout,
-      @NonNull Button btnNotificationSettings, @NonNull Button btnServerConfig,
-      @NonNull LinearLayout main, @NonNull TextView sensorDataText,
+      @NonNull Button btnNotificationSettings, @NonNull Button btnSamsungHealthSettings,
+      @NonNull Button btnServerConfig, @NonNull LinearLayout main, @NonNull TextView sensorDataText,
       @NonNull View watchStatusIndicator) {
     this.rootView = rootView;
     this.btnConnectWatch = btnConnectWatch;
     this.btnDashboard = btnDashboard;
     this.btnLogout = btnLogout;
     this.btnNotificationSettings = btnNotificationSettings;
+    this.btnSamsungHealthSettings = btnSamsungHealthSettings;
     this.btnServerConfig = btnServerConfig;
     this.main = main;
     this.sensorDataText = sensorDataText;
@@ -111,6 +115,12 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.btnSamsungHealthSettings;
+      Button btnSamsungHealthSettings = ViewBindings.findChildViewById(rootView, id);
+      if (btnSamsungHealthSettings == null) {
+        break missingId;
+      }
+
       id = R.id.btnServerConfig;
       Button btnServerConfig = ViewBindings.findChildViewById(rootView, id);
       if (btnServerConfig == null) {
@@ -132,8 +142,8 @@ public final class ActivityMainBinding implements ViewBinding {
       }
 
       return new ActivityMainBinding((LinearLayout) rootView, btnConnectWatch, btnDashboard,
-          btnLogout, btnNotificationSettings, btnServerConfig, main, sensorDataText,
-          watchStatusIndicator);
+          btnLogout, btnNotificationSettings, btnSamsungHealthSettings, btnServerConfig, main,
+          sensorDataText, watchStatusIndicator);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

@@ -3,6 +3,7 @@ package com.feri.redmedalertandroidapp.health;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
 
 import com.samsung.android.sdk.healthdata.HealthConnectionErrorResult;
@@ -71,7 +72,14 @@ public class SamsungHealthManager {
                     "com.samsung.health.exercise",
                     "com.samsung.health.body_temperature",
                     "com.samsung.health.body_composition",
-                    "com.samsung.health.activity"
+                    "com.samsung.health.activity",
+
+                    // Adaugă și aceste permisiuni specifice pentru pachetul tău
+                    "com.sec.android.app.shealth.step_count",
+                    "com.sec.android.app.shealth.heart_rate",
+                    "com.sec.android.app.shealth.blood_pressure",
+                    "com.sec.android.app.shealth.sleep",
+                    "com.sec.android.app.shealth.blood_glucose"
             };
 
             // Adaugă permisiuni pentru fiecare tip de date
@@ -139,6 +147,58 @@ public class SamsungHealthManager {
 //                HealthPermissionManager.PermissionType.READ
 //        ));
 //    }
+
+    public void forceRequestPermissions(Activity activity) {
+        if (!isConnected()) {
+            Log.e(TAG, "Nu se pot cere permisiuni: Samsung Health nu este conectat");
+            connect(); // Încearcă să conecteze înainte
+
+            // Așteaptă puțin pentru conectare
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        try {
+            Log.d(TAG, "Forțarea cererii de permisiuni pentru Samsung Health");
+            if (permissionManager == null) {
+                Log.e(TAG, "PermissionManager este null!");
+                return;
+            }
+
+            permissionManager.requestPermissions(permissionKeys, activity)
+                    .setResultListener(result -> {
+                        Map<HealthPermissionManager.PermissionKey, Boolean> resultMap = result.getResultMap();
+
+                        // Logăm rezultatele detaliat
+                        StringBuilder sb = new StringBuilder();
+                        for (Map.Entry<HealthPermissionManager.PermissionKey, Boolean> entry : resultMap.entrySet()) {
+                            sb.append(entry.getKey().getDataType())
+                                    .append(": ")
+                                    .append(entry.getValue() ? "GRANTED" : "DENIED")
+                                    .append("\n");
+                        }
+                        Log.d(TAG, "Rezultate permisiuni:\n" + sb.toString());
+
+                        // Reîncercăm după afișarea mesajului de dialog
+                        if (resultMap.containsValue(Boolean.FALSE)) {
+                            Log.d(TAG, "Unele permisiuni au fost refuzate, reîncercăm");
+                            // Reîncercăm după o scurtă pauză
+                            new Handler().postDelayed(() -> {
+                                try {
+                                    permissionManager.requestPermissions(permissionKeys, activity);
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Eroare la reîncercarea permisiunilor", e);
+                                }
+                            }, 2000);
+                        }
+                    });
+        } catch (Exception e) {
+            Log.e(TAG, "Eroare la cererea permisiunilor", e);
+        }
+    }
 
     public void requestPermissions(Activity activity) {
         Log.d("SamsungHealthSDK", "Cerere permisiuni Samsung Health");

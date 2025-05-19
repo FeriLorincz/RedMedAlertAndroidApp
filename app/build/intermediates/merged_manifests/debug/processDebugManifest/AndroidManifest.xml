@@ -15,7 +15,6 @@
     <uses-permission
         android:name="android.permission.BLUETOOTH_SCAN"
         android:usesPermissionFlags="neverForLocation" />
-    <uses-permission android:name="android.permission.BODY_SENSORS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -24,6 +23,9 @@
     <uses-permission android:name="com.samsung.android.health.permission.write" />
     <uses-permission android:name="com.samsung.android.sdk.health.permission.read" />
     <uses-permission android:name="com.samsung.android.sdk.health.permission.write" />
+    <uses-permission android:name="com.samsung.android.shealth.permission.read" />
+    <uses-permission android:name="com.samsung.android.shealth.permission.write" />
+    <uses-permission android:name="android.permission.BODY_SENSORS" />
     <uses-permission android:name="android.permission.BODY_SENSORS_BACKGROUND" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
@@ -36,6 +38,9 @@
 
     <queries>
         <package android:name="com.samsung.android.health" />
+        <package android:name="com.sec.android.app.shealth" />
+    </queries>
+    <queries>
         <package android:name="com.sec.android.app.shealth" />
     </queries>
 
@@ -115,14 +120,26 @@
         <meta-data
             android:name="com.samsung.health.sdk.AppId"
             android:value="com.feri.redmedalertandroidapp" />
+        <meta-data
+            android:name="com.samsung.android.shealth.permission.read"
+            android:value="com.feri.redmedalertandroidapp" />
 
         <!-- Samsung Health App ID -->
         <meta-data
             android:name="com.samsung.android.health.permission.read"
             android:value="com.feri.redmedalertandroidapp" />
         <meta-data
+            android:name="com.samsung.android.health.permission.write"
+            android:value="com.feri.redmedalertandroidapp" />
+        <meta-data
             android:name="com.samsung.health.sdk.HealthProviderAuthService"
             android:value=".health.HealthProviderAuthService" />
+        <meta-data
+            android:name="com.sec.android.app.shealth.permission.read"
+            android:value="com.feri.redmedalertandroidapp" />
+        <meta-data
+            android:name="com.sec.android.app.shealth.permission.write"
+            android:value="com.feri.redmedalertandroidapp" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"
