@@ -1,11 +1,15 @@
 package com.feri.redmedalertandroidapp;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.graphics.Color;
 import java.text.SimpleDateFormat;
@@ -39,6 +43,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.feri.redmedalertandroidapp.api.HealthDataApiManager;
 import com.feri.redmedalertandroidapp.api.RetrofitClient;
 import com.feri.redmedalertandroidapp.api.service.ApiService;
 import com.feri.redmedalertandroidapp.auth.service.AuthApiService;
@@ -48,6 +53,7 @@ import com.feri.redmedalertandroidapp.dashboard.DashboardActivity;
 import com.feri.redmedalertandroidapp.health.HealthConnectionCallback;
 import com.feri.redmedalertandroidapp.health.HealthDataReader;
 import com.feri.redmedalertandroidapp.health.SamsungHealthManager;
+import com.feri.redmedalertandroidapp.health.SensorDataSimulator;
 import com.feri.redmedalertandroidapp.notification.NotificationSettingsActivity;
 import com.feri.redmedalertandroidapp.settings.ServerConfigActivity;
 import com.feri.redmedalertandroidapp.util.PermissionHelper;
@@ -101,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
             // Încearcă să deschidă Galaxy Store pentru instalare
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("samsungapps://ProductDetail/com.samsung.android.health")));
+                        Uri.parse("samsungapps://ProductDetail/com.sec.android.app.shealth")));
             } catch (Exception e) {
                 Log.e(TAG, "Nu se poate deschide Galaxy Store", e);
                 Toast.makeText(this, "Nu se poate deschide Galaxy Store", Toast.LENGTH_SHORT).show();
@@ -115,7 +121,12 @@ public class MainActivity extends AppCompatActivity {
             // Verifică versiunea Samsung Health - cu protecție împotriva erorilor
             try {
                 // Încearcă mai multe nume de pachete până găsește unul valid
-                String[] possiblePackages = {"com.samsung.android.app.health", "com.samsung.android.health", "com.sec.android.app.shealth"};
+                String[] possiblePackages = {
+                        "com.sec.android.app.shealth",
+                        "com.sec.android.app.shealth:remote",
+                        "com.samsung.android.app.health",
+                        "com.samsung.android.health"
+                };
                 boolean foundVersion = false;
 
                 for (String packageName : possiblePackages) {
@@ -139,13 +150,14 @@ public class MainActivity extends AppCompatActivity {
             // Configurează conexiunea la smartwatch după verificarea Samsung Health
             setupSmartWatchConnection();
 
+            // Dialog cu instrucțiuni pentru permisiunile Samsung Health
             new android.app.AlertDialog.Builder(this)
                     .setTitle("Permisiuni Samsung Health")
-                    .setMessage("Pentru ca aplicația să funcționeze corect, trebuie să activați TOATE permisiunile din Samsung Health. Când apare dialogul Samsung Health, glisați butonul 'All permissions' spre dreapta și apăsați DONE.")
+                    .setMessage("Pentru ca aplicația să funcționeze corect, trebuie să activați TOATE permisiunile din Samsung Health. Când apare dialogul Samsung Health, activați Developer Mode și acordați toate permisiunile pentru aplicație.")
                     .setPositiveButton("OK", (dialog, which) -> {
                         if (healthManager != null) {
                             healthManager.connect();
-                            healthManager.requestPermissions(this);
+                            healthManager.forceRequestPermissions(this);
                         }
                     })
                     .setCancelable(false)
@@ -166,7 +178,13 @@ public class MainActivity extends AppCompatActivity {
         Button btnDashboard = findViewById(R.id.btnDashboard);
         Button btnNotificationSettings = findViewById(R.id.btnNotificationSettings);
         Button btnLogout = findViewById(R.id.btnLogout);
-        Button btnServerConfig = findViewById(R.id.btnServerConfig); // Butonul nou
+        Button btnServerConfig = findViewById(R.id.btnServerConfig);
+        Button btnSamsungHealthSettings = findViewById(R.id.btnSamsungHealthSettings);
+
+        // Configurare listener pentru butonul de setări Samsung Health
+        btnSamsungHealthSettings.setOnClickListener(v -> {
+            showSamsungHealthSettings();
+        });
 
         // Configurare listener pentru butonul de configurare server
         if (btnServerConfig != null) {
@@ -174,6 +192,33 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, ServerConfigActivity.class));
             });
         }
+    }
+
+    private void showSamsungHealthSettings() {
+        // Deschide dialogul pentru instrucțiuni despre activarea modului developer
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("Activare mod developer Samsung Health")
+                .setMessage("Pentru a permite accesul, trebuie să activați modul developer în Samsung Health:\n\n" +
+                        "1. Deschideți Samsung Health\n" +
+                        "2. Apăsați pe ⋮ (meniu) > Settings > About Samsung Health\n" +
+                        "3. Apăsați de 10 ori rapid pe versiune\n" +
+                        "4. Activați Developer Mode\n" +
+                        "5. Activați Developer Mode for Data Read\n\n" +
+                        "După ce ați terminat, reveniți la această aplicație.")
+                .setPositiveButton("Deschide Samsung Health", (dialog, id) -> {
+                    try {
+                        Intent intent = getPackageManager().getLaunchIntentForPackage("com.sec.android.app.shealth");
+                        if (intent != null) {
+                            startActivity(intent);
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Nu s-a putut deschide Samsung Health", e);
+                    }
+                })
+                .setNegativeButton("Anulează", (dialog, id) -> {
+                    dialog.dismiss();
+                })
+                .show();
     }
 
     // Metodă pentru a verifica și loga dispozitivele Bluetooth conectate
@@ -298,20 +343,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     private boolean isSamsungHealthInstalled() {
         try {
-            // Încearcă să găsească Samsung Health cu numele corect de pachet
-            getPackageManager().getPackageInfo("com.samsung.android.app.health", 0);
-            Log.d(TAG, "Samsung Health găsit cu numele corect de pachet");
-            return true;
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.e(TAG, "Samsung Health nu este instalat: " + e.getMessage());
-
-            // Opțional: încearcă și alte nume de pachete cunoscute
+            // Verifică pachetul corect pentru Samsung Health pe telefonul tău
             String[] healthPackages = {
-                    "com.samsung.android.health",
                     "com.sec.android.app.shealth",
-                    "com.samsung.health"
+                    "com.sec.android.app.shealth:remote",
+                    "com.samsung.android.app.health",
+                    "com.samsung.android.health"
             };
 
             for (String packageName : healthPackages) {
@@ -323,10 +363,42 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "Nu s-a găsit pachetul: " + packageName);
                 }
             }
-
+            return false;
+        } catch (Exception e) {
+            Log.e(TAG, "Eroare la verificarea Samsung Health: " + e.getMessage());
             return false;
         }
     }
+
+//    private boolean isSamsungHealthInstalled() {
+//        try {
+//            // Încearcă să găsească Samsung Health cu numele corect de pachet
+//            getPackageManager().getPackageInfo("com.samsung.android.app.health", 0);
+//            Log.d(TAG, "Samsung Health găsit cu numele corect de pachet");
+//            return true;
+//        } catch (PackageManager.NameNotFoundException e) {
+//            Log.e(TAG, "Samsung Health nu este instalat: " + e.getMessage());
+//
+//            // Opțional: încearcă și alte nume de pachete cunoscute
+//            String[] healthPackages = {
+//                    "com.samsung.android.health",
+//                    "com.sec.android.app.shealth",
+//                    "com.samsung.health"
+//            };
+//
+//            for (String packageName : healthPackages) {
+//                try {
+//                    getPackageManager().getPackageInfo(packageName, 0);
+//                    Log.d(TAG, "Samsung Health găsit cu numele de pachet: " + packageName);
+//                    return true;
+//                } catch (PackageManager.NameNotFoundException ex) {
+//                    Log.d(TAG, "Nu s-a găsit pachetul: " + packageName);
+//                }
+//            }
+//
+//            return false;
+//        }
+//    }
 
     private void initializeServices() {
         // Inițializare AuthService
@@ -347,6 +419,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupSmartWatchConnection() {
         Log.d(TAG, "Inițializare conexiune smartwatch");
+
+        // Verifică dacă aplicația are permisiunile necesare
+        checkAndRequestSamsungHealthPermissions();
+
         healthManager = new SamsungHealthManager(this);
 
         // Log starea inițială
@@ -437,6 +513,27 @@ public class MainActivity extends AppCompatActivity {
             }
         }, 10000); // 10 secunde timeout
     }
+
+
+    private void checkAndRequestSamsungHealthPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            String[] requiredPermissions = {
+                    Manifest.permission.BODY_SENSORS,
+                    Manifest.permission.BODY_SENSORS_BACKGROUND,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.BLUETOOTH_SCAN
+            };
+
+            for (String permission : requiredPermissions) {
+                if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, requiredPermissions, 100);
+                    break;
+                }
+            }
+        }
+    }
+
 
     private void setupListeners() {
         btnConnectWatch.setOnClickListener(v -> {

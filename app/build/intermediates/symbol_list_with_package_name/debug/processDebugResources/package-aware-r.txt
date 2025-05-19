@@ -3200,6 +3200,7 @@ id btnContinue
 id btnDashboard
 id btnLogout
 id btnNotificationSettings
+id btnSamsungHealthSettings
 id btnSaveConfig
 id btnServerConfig
 id btnTestConnection
