@@ -2,11 +2,14 @@ package com.feri.redmedalertandroidapp.health;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
 public class HealthProviderAuthService extends Service {
     private static final String TAG = "HealthProviderAuthSvc";
+
+    private final IBinder mBinder = new HealthProviderAuthServiceBinder();
 
     public HealthProviderAuthService() {
     }
@@ -14,14 +17,12 @@ public class HealthProviderAuthService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "onBind() - returning authorization service");
-        return new IHealthProviderAuthService.Stub();
+        return mBinder;
     }
 
-    private static class IHealthProviderAuthService {
-        private static class Stub extends android.os.Binder {
-            public Stub() {
-                this.attachInterface(null, "com.samsung.android.sdk.healthdata.IHealthProviderAuthService");
-            }
+    public class HealthProviderAuthServiceBinder extends Binder {
+        public HealthProviderAuthService getService() {
+            return HealthProviderAuthService.this;
         }
     }
 }

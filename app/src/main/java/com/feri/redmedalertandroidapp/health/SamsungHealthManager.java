@@ -58,46 +58,82 @@ public class SamsungHealthManager {
     }
 
     private void setupPermissionKeys() {
-        Log.d("SamsungHealthSDK", "Setare chei permisiuni");
 
         try {
-            // Lista completă de permisiuni Samsung Health
-            String[] healthDataTypes = {
-                    "com.samsung.health.heart_rate",
-                    "com.samsung.health.blood_pressure",
+            Log.d(TAG, "Setare chei permisiuni");
+
+            // Use a simpler approach for permission keys
+            permissionKeys.add(new HealthPermissionManager.PermissionKey(
+                    com.samsung.android.sdk.healthdata.HealthConstants.StepCount.HEALTH_DATA_TYPE,
+                    HealthPermissionManager.PermissionType.READ));
+
+            permissionKeys.add(new HealthPermissionManager.PermissionKey(
+                    com.samsung.android.sdk.healthdata.HealthConstants.HeartRate.HEALTH_DATA_TYPE,
+                    HealthPermissionManager.PermissionType.READ));
+
+            permissionKeys.add(new HealthPermissionManager.PermissionKey(
+                    com.samsung.android.sdk.healthdata.HealthConstants.BloodPressure.HEALTH_DATA_TYPE,
+                    HealthPermissionManager.PermissionType.READ));
+
+            permissionKeys.add(new HealthPermissionManager.PermissionKey(
                     "com.samsung.health.oxygen_saturation",
-                    "com.samsung.health.step_count",
+                    HealthPermissionManager.PermissionType.READ));
+
+            permissionKeys.add(new HealthPermissionManager.PermissionKey(
                     "com.samsung.health.sleep",
-                    "com.samsung.health.stress",
-                    "com.samsung.health.exercise",
-                    "com.samsung.health.body_temperature",
-                    "com.samsung.health.body_composition",
-                    "com.samsung.health.activity",
+                    HealthPermissionManager.PermissionType.READ));
 
-                    // Adaugă și aceste permisiuni specifice pentru pachetul tău
-                    "com.sec.android.app.shealth.step_count",
-                    "com.sec.android.app.shealth.heart_rate",
-                    "com.sec.android.app.shealth.blood_pressure",
-                    "com.sec.android.app.shealth.sleep",
-                    "com.sec.android.app.shealth.blood_glucose"
-            };
-
-            // Adaugă permisiuni pentru fiecare tip de date
-            for (String dataType : healthDataTypes) {
-                try {
-                    permissionKeys.add(new HealthPermissionManager.PermissionKey(
-                            dataType,
-                            HealthPermissionManager.PermissionType.READ
-                    ));
-                    Log.d("SamsungHealthSDK", "Permisiune adăugată pentru: " + dataType);
-                } catch (Exception e) {
-                    Log.e("SamsungHealthSDK", "Eroare la adăugarea permisiunii pentru: " + dataType, e);
-                }
-            }
+            Log.d(TAG, "Au fost configurate " + permissionKeys.size() + " chei de permisiuni");
         } catch (Exception e) {
-            Log.e("SamsungHealthSDK", "Eroare la configurarea permisiunilor", e);
+            Log.e(TAG, "Eroare la configurarea permisiunilor", e);
         }
     }
+
+
+
+
+//        Log.d("SamsungHealthSDK", "Setare chei permisiuni");
+//
+//        try {
+//            // Lista completă de permisiuni Samsung Health
+//            String[] healthDataTypes = {
+//                    "com.samsung.health.heart_rate",
+//                    "com.samsung.health.blood_pressure",
+//                    "com.samsung.health.oxygen_saturation",
+//                    "com.samsung.health.step_count",
+//                    "com.samsung.health.sleep",
+//                    "com.samsung.health.stress",
+//                    "com.samsung.health.exercise",
+//                    "com.samsung.health.body_temperature",
+//                    "com.samsung.health.body_composition",
+//                    "com.samsung.health.activity",
+//
+//                    // Adaugă și aceste permisiuni specifice pentru pachetul tău
+//                    "com.sec.android.app.shealth.step_count",
+//                    "com.sec.android.app.shealth.heart_rate",
+//                    "com.sec.android.app.shealth.blood_pressure",
+//                    "com.sec.android.app.shealth.sleep",
+//                    "com.sec.android.app.shealth.blood_glucose"
+//            };
+//
+//            // Adaugă permisiuni pentru fiecare tip de date
+//            for (String dataType : healthDataTypes) {
+//                try {
+//                    permissionKeys.add(new HealthPermissionManager.PermissionKey(
+//                            dataType,
+//                            HealthPermissionManager.PermissionType.READ
+//                    ));
+//                    Log.d("SamsungHealthSDK", "Permisiune adăugată pentru: " + dataType);
+//                } catch (Exception e) {
+//                    Log.e("SamsungHealthSDK", "Eroare la adăugarea permisiunii pentru: " + dataType, e);
+//                }
+//            }
+//        } catch (Exception e) {
+//            Log.e("SamsungHealthSDK", "Eroare la configurarea permisiunilor", e);
+//        }
+//    }
+
+
 
 //    private void setupPermissionKeys() {
 //        Log.d("SamsungHealthSDK", "Metoda setupPermissionKeys() a fost apelată");
@@ -255,6 +291,42 @@ public class SamsungHealthManager {
             }
         }
     }
+
+
+    private boolean requestPermissionDirectly() {
+        try {
+            if (permissionManager == null || !isConnected()) {
+                Log.e(TAG, "Nu se pot cere permisiuni: PermissionManager este null sau Samsung Health nu este conectat");
+                return false;
+            }
+
+            // Obține permisiunile curente
+            Map<HealthPermissionManager.PermissionKey, Boolean> currentPermissions =
+                    permissionManager.isPermissionAcquired(permissionKeys);
+
+            // Verifică dacă toate permisiunile sunt deja acordate
+            boolean allGranted = true;
+            for (Map.Entry<HealthPermissionManager.PermissionKey, Boolean> entry : currentPermissions.entrySet()) {
+                if (!entry.getValue()) {
+                    allGranted = false;
+                    Log.e(TAG, "Permisiunea lipsă: " + entry.getKey().getDataType());
+                }
+            }
+
+            if (allGranted) {
+                Log.d(TAG, "Toate permisiunile sunt deja acordate");
+                return true;
+            } else {
+                Log.d(TAG, "Unele permisiuni lipsesc, se solicită direct");
+                return false;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Eroare la verificarea permisiunilor: " + e.getMessage(), e);
+            return false;
+        }
+    }
+
+
 
     public void connect() {
         Log.d("SamsungHealthSDK", "Încercare de conectare la Samsung Health cu metoda connect()");

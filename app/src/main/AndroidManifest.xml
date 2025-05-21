@@ -19,9 +19,23 @@
     <uses-permission android:name="com.samsung.android.sdk.health.permission.write" />
     <uses-permission android:name="com.samsung.android.shealth.permission.read" />
     <uses-permission android:name="com.samsung.android.shealth.permission.write" />
+    <uses-permission android:name="com.samsung.health.permission.read" />
+    <uses-permission android:name="com.samsung.health.permission.write" />
+    <uses-permission android:name="com.samsung.android.health.permission.read" />
+    <uses-permission android:name="com.samsung.android.health.permission.write" />
+    <uses-permission android:name="com.samsung.permission.HEALTH_DATA" />
     <uses-permission android:name="android.permission.BODY_SENSORS" />
     <uses-permission android:name="android.permission.BODY_SENSORS_BACKGROUND"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Samsung Health Connect Permissions -->
+    <uses-permission android:name="android.permission.health.READ_HEART_RATE" />
+    <uses-permission android:name="android.permission.health.READ_BLOOD_PRESSURE" />
+    <uses-permission android:name="android.permission.health.READ_BLOOD_GLUCOSE" />
+    <uses-permission android:name="android.permission.health.READ_OXYGEN_SATURATION" />
+    <uses-permission android:name="android.permission.health.READ_BODY_TEMPERATURE" />
+    <uses-permission android:name="android.permission.health.READ_STEPS" />
+    <uses-permission android:name="android.permission.health.READ_SLEEP" />
+    <uses-permission android:name="android.permission.health.READ_WEIGHT" />
 
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
     <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="true" />
@@ -32,6 +46,11 @@
 
     <queries>
         <package android:name="com.sec.android.app.shealth" />
+    </queries>
+
+    <!-- Permisiune pentru Health Connect -->
+    <queries>
+        <package android:name="com.google.android.apps.healthdata" />
     </queries>
 
     <application
@@ -99,9 +118,26 @@
             android:name=".health.HealthMonitoringService"
             android:exported="false" />
 
+        <service
+            android:name=".health.HealthProviderAuthService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.samsung.android.sdk.healthdata.service.health_provider_auth" />
+            </intent-filter>
+        </service>
+
         <!-- Samsung Health SDK metadata -->
         <meta-data
             android:name="com.samsung.health.sdk.AppId"
+            android:value="com.feri.redmedalertandroidapp" />
+
+        <meta-data
+            android:name="com.samsung.health.sdk.permission.read"
+            android:value="com.feri.redmedalertandroidapp" />
+
+        <meta-data
+            android:name="com.samsung.health.sdk.permission.write"
             android:value="com.feri.redmedalertandroidapp" />
 
         <meta-data
