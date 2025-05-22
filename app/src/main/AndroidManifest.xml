@@ -21,13 +21,12 @@
     <uses-permission android:name="com.samsung.android.shealth.permission.write" />
     <uses-permission android:name="com.samsung.health.permission.read" />
     <uses-permission android:name="com.samsung.health.permission.write" />
-    <uses-permission android:name="com.samsung.android.health.permission.read" />
-    <uses-permission android:name="com.samsung.android.health.permission.write" />
     <uses-permission android:name="com.samsung.permission.HEALTH_DATA" />
     <uses-permission android:name="android.permission.BODY_SENSORS" />
     <uses-permission android:name="android.permission.BODY_SENSORS_BACKGROUND"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <!-- Samsung Health Connect Permissions -->
+
+    <!-- Health Connect Permissions - Simplificat -->
     <uses-permission android:name="android.permission.health.READ_HEART_RATE" />
     <uses-permission android:name="android.permission.health.READ_BLOOD_PRESSURE" />
     <uses-permission android:name="android.permission.health.READ_BLOOD_GLUCOSE" />
@@ -36,21 +35,24 @@
     <uses-permission android:name="android.permission.health.READ_STEPS" />
     <uses-permission android:name="android.permission.health.READ_SLEEP" />
     <uses-permission android:name="android.permission.health.READ_WEIGHT" />
+    <uses-permission android:name="android.permission.health.READ_DISTANCE" />
+    <uses-permission android:name="android.permission.health.READ_EXERCISE" />
 
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
     <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="true" />
 
     <queries>
         <package android:name="com.samsung.android.health" />
-    </queries>
-
-    <queries>
         <package android:name="com.sec.android.app.shealth" />
-    </queries>
-
-    <!-- Permisiune pentru Health Connect -->
-    <queries>
         <package android:name="com.google.android.apps.healthdata" />
+
+        <!-- Intent queries pentru Health Connect -->
+        <intent>
+            <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+        </intent>
+        <intent>
+            <action android:name="android.settings.HEALTH_CONNECT_SETTINGS" />
+        </intent>
     </queries>
 
     <application
@@ -114,6 +116,7 @@
             android:exported="false"
             android:label="Configurare Server" />
 
+        <!-- Servicii -->
         <service
             android:name=".health.HealthMonitoringService"
             android:exported="false" />
@@ -121,7 +124,8 @@
         <service
             android:name=".health.HealthProviderAuthService"
             android:enabled="true"
-            android:exported="true">
+            android:exported="false"
+            android:permission="com.samsung.android.sdk.healthdata.service.health_provider_auth">
             <intent-filter>
                 <action android:name="com.samsung.android.sdk.healthdata.service.health_provider_auth" />
             </intent-filter>
