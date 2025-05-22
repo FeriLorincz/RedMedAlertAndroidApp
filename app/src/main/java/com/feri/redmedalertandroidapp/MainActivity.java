@@ -45,6 +45,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.feri.redmedalertandroidapp.api.HealthDataApiManager;
 import com.feri.redmedalertandroidapp.api.RetrofitClient;
+import com.feri.redmedalertandroidapp.api.config.ApiClient;
+import com.feri.redmedalertandroidapp.api.service.ApiCallback;
 import com.feri.redmedalertandroidapp.api.service.ApiService;
 import com.feri.redmedalertandroidapp.auth.service.AuthApiService;
 import com.feri.redmedalertandroidapp.auth.service.AuthService;
@@ -118,14 +120,13 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Nu se poate deschide Galaxy Store", Toast.LENGTH_SHORT).show();
             }
 
-            // Oprește inițializarea Samsung Health dacă nu este instalat
-            return;
+            // NU oprește inițializarea - continuă cu Health Connect
+            Log.d(TAG, "Continuăm cu Health Connect în ciuda lipsei Samsung Health");
         } else {
             Log.d(TAG, "Samsung Health este instalat");
 
             // Verifică versiunea Samsung Health - cu protecție împotriva erorilor
             try {
-                // Încearcă mai multe nume de pachete până găsește unul valid
                 String[] possiblePackages = {
                         "com.sec.android.app.shealth",
                         "com.sec.android.app.shealth:remote",
@@ -151,124 +152,173 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Log.e(TAG, "Eroare generală la obținerea versiunii Samsung Health", e);
             }
-
-
-
-
-            // Inițializează Health Connect Manager
-            healthConnectManager = new HealthConnectManager(this);
-            healthConnectManager.registerForActivityResult(this);
-            healthConnectManager.setListener(new HealthConnectManager.HealthConnectListener() {
-                @Override
-                public void onConnected() {
-                    Toast.makeText(MainActivity.this,
-                            "Conectat la Health Connect",
-                            Toast.LENGTH_SHORT).show();
-                    updateSmartWatchUI(true);
-                }
-
-                @Override
-                public void onConnectionFailed(String error) {
-                    Toast.makeText(MainActivity.this,
-                            "Eroare la conectare: " + error,
-                            Toast.LENGTH_LONG).show();
-                    updateSmartWatchUI(false);
-                }
-
-                @Override
-                public void onDataReceived(Map<String, Double> data) {
-                    if (data.isEmpty()) {
-                        Toast.makeText(MainActivity.this,
-                                "Nu s-au primit date de la Health Connect",
-                                Toast.LENGTH_SHORT).show();
-                        if (sensorDataText != null) {
-                            sensorDataText.setText("Nu există date disponibile");
-                        }
-                    } else {
-                        StringBuilder sb = new StringBuilder();
-                        for (Map.Entry<String, Double> entry : data.entrySet()) {
-                            sb.append(formatSensorName(entry.getKey())).append(": ")
-                                    .append(formatSensorValue(entry.getKey(), entry.getValue())).append("\n");
-                        }
-                        sb.append("\nUltima actualizare: ")
-                                .append(new SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-                                        .format(new Date()));
-
-                        if (sensorDataText != null) {
-                            sensorDataText.setText(sb.toString());
-                        }
-                    }
-                }
-            });
-
-            // Modifică butonul de conectare pentru a folosi Health Connect
-            Button btnConnectWatch = findViewById(R.id.btnConnectWatch);
-            btnConnectWatch.setOnClickListener(v -> {
-                healthConnectManager.requestPermissions();
-            });
-
-
-//            // Inițializăm noul SamsungHealthConnector
-//            healthConnector = new SamsungHealthConnector(this);
-//            healthConnector.setConnectionListener(new SamsungHealthConnector.ConnectionListener() {
-//                @Override
-//                public void onConnected(boolean permissionsGranted) {
-//                    if (permissionsGranted) {
-//                        runOnUiThread(() -> {
-//                            Toast.makeText(MainActivity.this,
-//                                    "Conectat la Samsung Health cu permisiuni",
-//                                    Toast.LENGTH_SHORT).show();
-//                            updateSmartWatchUI(true);
-//                        });
-//
-//                        // Start monitoring health data
-//                        startHealthMonitoring();
-//                    } else {
-//                        runOnUiThread(() -> {
-//                            Toast.makeText(MainActivity.this,
-//                                    "Conectat, dar unele permisiuni lipsesc",
-//                                    Toast.LENGTH_LONG).show();
-//                            updateSmartWatchUI(false);
-//                        });
-//                    }
-//                }
-//
-//                @Override
-//                public void onConnectionFailed(String error) {
-//                    runOnUiThread(() -> {
-//                        Toast.makeText(MainActivity.this,
-//                                "Eroare de conectare: " + error,
-//                                Toast.LENGTH_LONG).show();
-//                        updateSmartWatchUI(false);
-//                    });
-//                }
-//            });
-
-            // Dialog cu instrucțiuni pentru permisiunile Samsung Health
-            new android.app.AlertDialog.Builder(this)
-                    .setTitle("Permisiuni Samsung Health")
-                    .setMessage("Pentru ca aplicația să funcționeze corect, trebuie să activați TOATE permisiunile din Samsung Health. Când apare dialogul Samsung Health, activați Developer Mode și acordați toate permisiunile pentru aplicație.")
-                    .setPositiveButton("OK", (dialog, which) -> {
-                        healthConnector.connect();
-                        healthConnector.requestPermissions(MainActivity.this);
-                    })
-                    .setCancelable(false)
-                    .show();
-
-            // Configurează conexiunea la smartwatch după verificarea Samsung Health
-            setupSmartWatchConnection();
-            setupListeners();
-            setupSensorDataMonitoring();
         }
+
+        // =================================================================
+        // PRIORITATE: Inițializează Health Connect Manager (metoda principală)
+        // =================================================================
+        Log.d(TAG, "Inițializare Health Connect Manager");
+
+        healthConnectManager = new HealthConnectManager(this);
+        healthConnectManager.registerForActivityResult(this);
+        healthConnectManager.setListener(new HealthConnectManager.HealthConnectListener() {
+            @Override
+            public void onConnected() {
+                Toast.makeText(MainActivity.this,
+                        "Conectat la Health Connect",
+                        Toast.LENGTH_SHORT).show();
+                updateSmartWatchUI(true);
+                Log.d(TAG, "Health Connect conectat cu succes");
+            }
+
+            @Override
+            public void onConnectionFailed(String error) {
+                Toast.makeText(MainActivity.this,
+                        "Eroare Health Connect: " + error,
+                        Toast.LENGTH_LONG).show();
+                updateSmartWatchUI(false);
+                Log.e(TAG, "Health Connect connection failed: " + error);
+            }
+
+            @Override
+            public void onDataReceived(Map<String, Double> data) {
+                if (data.isEmpty()) {
+                    Toast.makeText(MainActivity.this,
+                            "Nu s-au primit date de la Health Connect",
+                            Toast.LENGTH_SHORT).show();
+                    if (sensorDataText != null) {
+                        sensorDataText.setText("Nu există date disponibile");
+                    }
+                    return;
+                }
+
+                // Afișează datele în UI
+                StringBuilder sb = new StringBuilder();
+                for (Map.Entry<String, Double> entry : data.entrySet()) {
+                    sb.append(formatSensorName(entry.getKey())).append(": ")
+                            .append(formatSensorValue(entry.getKey(), entry.getValue())).append("\n");
+                }
+                sb.append("\nUltima actualizare: ")
+                        .append(new SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                                .format(new Date()));
+
+                if (sensorDataText != null) {
+                    sensorDataText.setText(sb.toString());
+                }
+
+                // =================================================================
+                // TRIMITERE DATE CĂTRE SERVER
+                // =================================================================
+                Log.d(TAG, "Trimitem datele către server: " + data.toString());
+
+                // Folosim ApiClient pentru a trimite datele
+                ApiClient.getInstance(MainActivity.this).uploadHealthData(data, new ApiCallback() {
+                    @Override
+                    public void onSuccess() {
+                        runOnUiThread(() -> {
+                            Log.d(TAG, "Date trimise cu succes către server");
+                            Toast.makeText(MainActivity.this,
+                                    "✓ Date trimise cu succes către server",
+                                    Toast.LENGTH_SHORT).show();
+                        });
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        runOnUiThread(() -> {
+                            Log.e(TAG, "Eroare la trimiterea datelor către server: " + error);
+                            Toast.makeText(MainActivity.this,
+                                    "✗ Eroare trimitere date: " + error,
+                                    Toast.LENGTH_LONG).show();
+                        });
+                    }
+                });
+            }
+        });
+
+        // Configurează butonul principal de conectare
+        Button btnConnectWatch = findViewById(R.id.btnConnectWatch);
+        if (btnConnectWatch != null) {
+            btnConnectWatch.setOnClickListener(v -> {
+                Log.d(TAG, "Buton conectare apăsat - Health Connect");
+                try {
+                    if (healthConnectManager != null) {
+                        healthConnectManager.requestPermissions();
+                    } else {
+                        Toast.makeText(MainActivity.this,
+                                "Health Connect Manager nu este inițializat",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Eroare la apăsarea butonului de conectare", e);
+                    Toast.makeText(MainActivity.this,
+                            "Eroare: " + e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+
+//        // Modifică butonul de conectare pentru a folosi Health Connect
+//        Button btnConnectWatch = findViewById(R.id.btnConnectWatch);
+//        btnConnectWatch.setOnClickListener(v -> {
+//            Log.d(TAG, "Buton conectare apăsat - folosim Health Connect");
+//            healthConnectManager.requestPermissions();
+//        });
+
+        // =================================================================
+        // OPȚIONAL: Păstrăm Samsung Health SDK ca backup (comentat pentru a evita conflictele)
+        // =================================================================
+    /*
+    // Inițializăm noul SamsungHealthConnector doar ca backup
+    healthConnector = new SamsungHealthConnector(this);
+    healthConnector.setConnectionListener(new SamsungHealthConnector.ConnectionListener() {
+        @Override
+        public void onConnected(boolean permissionsGranted) {
+            if (permissionsGranted) {
+                runOnUiThread(() -> {
+                    Toast.makeText(MainActivity.this,
+                            "Backup: Conectat la Samsung Health cu permisiuni",
+                            Toast.LENGTH_SHORT).show();
+                });
+                startHealthMonitoring();
+            } else {
+                runOnUiThread(() -> {
+                    Toast.makeText(MainActivity.this,
+                            "Backup: Conectat la Samsung Health, dar unele permisiuni lipsesc",
+                            Toast.LENGTH_LONG).show();
+                });
+            }
+        }
+
+        @Override
+        public void onConnectionFailed(String error) {
+            runOnUiThread(() -> {
+                Log.w(TAG, "Samsung Health backup connection failed: " + error);
+            });
+        }
+    });
+    */
+
+        // Configurează conexiunea la smartwatch după verificarea Samsung Health
+        // setupSmartWatchConnection(); // Comentat pentru a evita conflictele
+        setupListeners();
+        setupSensorDataMonitoring();
 
         // Verifică și afișează dispozitivele Bluetooth conectate
         logConnectedBluetoothDevices();
 
-        // Adăugăm butonul pentru testarea Samsung Health
+        // Adăugăm butonul pentru testarea Health Connect
         Button btnTestSamsungHealth = findViewById(R.id.btnSamsungHealthSettings);
-        btnTestSamsungHealth.setOnClickListener(v -> {
-            testSamsungHealthConnection();
-        });
+        if (btnTestSamsungHealth != null) {
+            btnTestSamsungHealth.setText("Test Health Connect");
+            btnTestSamsungHealth.setOnClickListener(v -> {
+                testHealthConnectConnection();
+            });
+        }
+
+        Log.d(TAG, "MainActivity onCreate() completat cu succes");
+
     }
 
 
@@ -932,49 +982,54 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    // Modifică metoda testSamsungHealthConnection() pentru a folosi Health Connect
-    private void testSamsungHealthConnection() {
-        healthConnectManager.readHealthData();
+    // Metodă nouă pentru testarea Health Connect
+    private void testHealthConnectConnection() {
+        Log.d(TAG, "Testăm conexiunea Health Connect");
+        if (healthConnectManager != null) {
+            healthConnectManager.readHealthData();
+        } else {
+            Toast.makeText(this, "Health Connect nu este inițializat", Toast.LENGTH_SHORT).show();
+        }
     }
 
-//    private void testSamsungHealthConnection() {
-//        if (healthConnector != null && healthConnector.getHealthDataStore() != null) {
-//            Log.d(TAG, "Testăm conexiunea Samsung Health...");
-//
-//            HealthDataReader reader = new HealthDataReader(healthConnector.getHealthDataStore());
-//            reader.readLatestData(new HealthDataReader.HealthDataListener() {
-//                @Override
-//                public void onDataReceived(Map<String, Double> data) {
-//                    StringBuilder sb = new StringBuilder("Date primite de la Samsung Health:\n");
-//                    if (data.isEmpty()) {
-//                        sb.append("Nu s-au primit date");
-//                    } else {
-//                        for (Map.Entry<String, Double> entry : data.entrySet()) {
-//                            sb.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
-//                        }
-//                    }
-//                    Log.d(TAG, sb.toString());
-//                    runOnUiThread(() -> {
-//                        Toast.makeText(MainActivity.this,
-//                                "Test Samsung Health: " + (data.isEmpty() ? "Fără date" : data.size() + " măsurători primite"),
-//                                Toast.LENGTH_LONG).show();
-//                    });
-//                }
-//
-//                @Override
-//                public void onDataReadError(String message) {
-//                    Log.e(TAG, "Eroare la citirea datelor: " + message);
-//                    runOnUiThread(() -> {
-//                        Toast.makeText(MainActivity.this,
-//                                "Eroare la citirea datelor: " + message,
-//                                Toast.LENGTH_LONG).show();
-//                    });
-//                }
-//            });
-//        } else {
-//            Log.e(TAG, "Nu se poate testa - Samsung Health nu este conectat");
-//            Toast.makeText(this, "Samsung Health nu este conectat pentru test", Toast.LENGTH_SHORT).show();
-//        }
-//    }
+    private void testSamsungHealthConnection() {
+        if (healthConnector != null && healthConnector.getHealthDataStore() != null) {
+            Log.d(TAG, "Testăm conexiunea Samsung Health...");
+
+            HealthDataReader reader = new HealthDataReader(healthConnector.getHealthDataStore());
+            reader.readLatestData(new HealthDataReader.HealthDataListener() {
+                @Override
+                public void onDataReceived(Map<String, Double> data) {
+                    StringBuilder sb = new StringBuilder("Date primite de la Samsung Health:\n");
+                    if (data.isEmpty()) {
+                        sb.append("Nu s-au primit date");
+                    } else {
+                        for (Map.Entry<String, Double> entry : data.entrySet()) {
+                            sb.append(entry.getKey()).append(": ").append(entry.getValue()).append("\n");
+                        }
+                    }
+                    Log.d(TAG, sb.toString());
+                    runOnUiThread(() -> {
+                        Toast.makeText(MainActivity.this,
+                                "Test Samsung Health: " + (data.isEmpty() ? "Fără date" : data.size() + " măsurători primite"),
+                                Toast.LENGTH_LONG).show();
+                    });
+                }
+
+                @Override
+                public void onDataReadError(String message) {
+                    Log.e(TAG, "Eroare la citirea datelor: " + message);
+                    runOnUiThread(() -> {
+                        Toast.makeText(MainActivity.this,
+                                "Eroare la citirea datelor: " + message,
+                                Toast.LENGTH_LONG).show();
+                    });
+                }
+            });
+        } else {
+            Log.e(TAG, "Nu se poate testa - Samsung Health nu este conectat");
+            Toast.makeText(this, "Samsung Health nu este conectat pentru test", Toast.LENGTH_SHORT).show();
+        }
+    }
 
 }

@@ -135,4 +135,28 @@ dependencies {
 
     // Health Connect
     implementation "androidx.health:health-connect-client:1.1.0-alpha01"
+    implementation "androidx.health.connect:connect-client:1.1.0-alpha01"
+    implementation "androidx.concurrent:concurrent-futures:1.1.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-guava:1.7.3"
+
+
+    // Actualizează Kotlin - necesar pentru Health Connect
+    implementation "androidx.core:core-ktx:1.12.0"
+
+    // Kotlin pentru compatibilitate
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.10"
+
+    // Google Guava pentru Futures
+    implementation "com.google.guava:guava:31.1-android"
+
+    // Google Play Services pentru compatibilitate
+    implementation 'com.google.android.gms:play-services-fitness:21.1.0'
+    implementation 'com.google.android.gms:play-services-auth:20.7.0'
+
+    // Activity Result API
+    implementation 'androidx.activity:activity:1.8.2'
+    implementation 'androidx.fragment:fragment:1.6.2'
+
 }

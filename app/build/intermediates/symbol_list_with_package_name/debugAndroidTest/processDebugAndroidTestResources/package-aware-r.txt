@@ -1,3 +1,0 @@
-com.feri.redmedalertandroidapp.test
-style WhiteBackgroundDialogTheme
-style WhiteBackgroundTheme
