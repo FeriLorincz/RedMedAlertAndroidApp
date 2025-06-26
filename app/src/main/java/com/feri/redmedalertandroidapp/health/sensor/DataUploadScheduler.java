@@ -18,7 +18,7 @@ import androidx.work.WorkRequest;
 
 import com.feri.redmedalertandroidapp.api.config.ApiClient;
 import com.feri.redmedalertandroidapp.api.model.HealthDataEntity;
-import com.feri.redmedalertandroidapp.api.service.ApiCallback;
+import com.feri.redmedalertandroidapp.api.config.ApiClient.ApiCallback;
 import com.feri.redmedalertandroidapp.health.HealthDataWorker;
 import com.feri.redmedalertandroidapp.health.monitor.BatteryMonitor;
 import com.feri.redmedalertandroidapp.health.util.DataCompressor;

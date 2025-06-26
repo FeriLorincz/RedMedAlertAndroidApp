@@ -1,6 +1,6 @@
 package com.feri.redmedalertandroidapp.network;
 
-import com.feri.redmedalertandroidapp.api.config.ApiClient;
+import com.feri.redmedalertandroidapp.api.RetrofitClient; // FOLOSEȘTE RetrofitClient existent!
 import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -20,7 +20,7 @@ public class NetworkModule {
                 .build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ApiClient.getBaseUrl())
+                .baseUrl(RetrofitClient.getCurrentUrl()) // FOLOSEȘTE RetrofitClient.getCurrentUrl() în loc de ApiClient.getBaseUrl()
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();

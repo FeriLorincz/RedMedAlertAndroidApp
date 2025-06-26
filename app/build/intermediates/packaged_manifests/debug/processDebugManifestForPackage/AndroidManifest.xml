@@ -40,17 +40,20 @@
     <uses-permission android:name="android.permission.health.READ_WEIGHT" />
     <uses-permission android:name="android.permission.health.READ_DISTANCE" />
     <uses-permission android:name="android.permission.health.READ_EXERCISE" />
+    <uses-permission android:name="android.permission.health.WRITE_HEART_RATE" />
+    <uses-permission android:name="android.permission.health.WRITE_STEPS" />
 
-    <!-- Samsung Health Permissions (pentru backup/compatibilitate) -->
-    <uses-permission android:name="com.samsung.android.health.permission.read" />
-    <uses-permission android:name="com.samsung.android.health.permission.write" />
-    <uses-permission android:name="com.samsung.android.sdk.health.permission.read" />
-    <uses-permission android:name="com.samsung.android.sdk.health.permission.write" />
-    <uses-permission android:name="com.samsung.android.shealth.permission.read" />
-    <uses-permission android:name="com.samsung.android.shealth.permission.write" />
-    <uses-permission android:name="com.samsung.health.permission.read" />
-    <uses-permission android:name="com.samsung.health.permission.write" />
-    <uses-permission android:name="com.samsung.permission.HEALTH_DATA" />
+    <!-- &lt;!&ndash; Samsung Health Permissions (pentru backup/compatibilitate) &ndash;&gt; -->
+    <!-- <uses-permission android:name="com.samsung.android.health.permission.read" /> -->
+    <!-- <uses-permission android:name="com.samsung.android.health.permission.write" /> -->
+    <!-- <uses-permission android:name="com.samsung.android.sdk.health.permission.read" /> -->
+    <!-- <uses-permission android:name="com.samsung.android.sdk.health.permission.write" /> -->
+    <!-- <uses-permission android:name="com.samsung.android.shealth.permission.read" /> -->
+    <!-- <uses-permission android:name="com.samsung.android.shealth.permission.write" /> -->
+    <!-- <uses-permission android:name="com.samsung.health.permission.read" /> -->
+    <!-- <uses-permission android:name="com.samsung.health.permission.write" /> -->
+    <!-- <uses-permission android:name="com.samsung.permission.HEALTH_DATA" /> -->
+
 
     <!-- Hardware features -->
     <uses-feature
@@ -159,16 +162,21 @@
             android:name="com.feri.redmedalertandroidapp.health.HealthMonitoringService"
             android:exported="false" />
 
-        <!-- Samsung Health SDK metadata (pentru compatibilitate) -->
-        <meta-data
-            android:name="com.samsung.health.sdk.AppId"
-            android:value="com.feri.redmedalertandroidapp" />
-        <meta-data
-            android:name="com.samsung.health.sdk.permission.read"
-            android:value="com.feri.redmedalertandroidapp" />
-        <meta-data
-            android:name="com.samsung.health.sdk.permission.write"
-            android:value="com.feri.redmedalertandroidapp" />
+        <!-- &lt;!&ndash; Samsung Health SDK metadata (pentru compatibilitate) &ndash;&gt; -->
+        <!-- <meta-data -->
+        <!-- android:name="com.samsung.health.sdk.AppId" -->
+        <!-- android:value="com.feri.redmedalertandroidapp" /> -->
+
+
+        <!-- <meta-data -->
+        <!-- android:name="com.samsung.health.sdk.permission.read" -->
+        <!-- android:value="com.feri.redmedalertandroidapp" /> -->
+
+
+        <!-- <meta-data -->
+        <!-- android:name="com.samsung.health.sdk.permission.write" -->
+        <!-- android:value="com.feri.redmedalertandroidapp" /> -->
+
 
         <!-- Health Connect metadata -->
         <meta-data
