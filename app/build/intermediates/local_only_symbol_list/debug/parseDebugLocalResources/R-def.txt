@@ -14,6 +14,7 @@ drawable ic_launcher_foreground
 drawable ic_password
 drawable status_connected
 drawable status_disconnected
+drawable status_simulated
 id accelerometerValue
 id addContactButton
 id addDiseaseButton

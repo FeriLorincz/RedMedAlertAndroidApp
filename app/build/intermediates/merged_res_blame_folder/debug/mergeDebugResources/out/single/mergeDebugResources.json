@@ -8,6 +8,10 @@
         "source": "com.feri.redmedalertandroidapp-main-44:/mipmap-xxxhdpi/ic_launcher.webp"
     },
     {
+        "merged": "com.feri.redmedalertandroidapp-debug-42:/drawable_status_simulated.xml.flat",
+        "source": "com.feri.redmedalertandroidapp-main-44:/drawable/status_simulated.xml"
+    },
+    {
         "merged": "com.feri.redmedalertandroidapp-debug-42:/drawable_ic_password.xml.flat",
         "source": "com.feri.redmedalertandroidapp-main-44:/drawable/ic_password.xml"
     },

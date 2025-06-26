@@ -120,8 +120,11 @@ dependencies {
     // Pentru Jackson (alternativă la JsonProperty)
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
 
-    // Health Connect - VERSIUNI CORECTE
-    implementation "androidx.health.connect:connect-client:1.0.0-alpha11"
+//    // Health Connect - VERSIUNI CORECTE
+//    implementation "androidx.health.connect:connect-client:1.0.0-alpha11"
+
+    // Health Connect - VERSIUNE SIMPLIFICATĂ pentru compatibilitate
+    implementation "androidx.health.connect:connect-client:1.1.0-alpha07"
 
     // Concurrent Futures pentru Health Connect
     implementation "androidx.concurrent:concurrent-futures:1.1.0"

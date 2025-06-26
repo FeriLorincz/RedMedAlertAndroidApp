@@ -16,7 +16,7 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 import com.feri.redmedalertandroidapp.api.config.ApiClient;
-import com.feri.redmedalertandroidapp.api.service.ApiCallback;
+import com.feri.redmedalertandroidapp.api.config.ApiClient.ApiCallback;
 import com.feri.redmedalertandroidapp.api.service.DatabaseHelper;
 import com.samsung.android.sdk.healthdata.HealthConnectionErrorResult;
 import com.samsung.android.sdk.healthdata.HealthDataStore;

@@ -46,7 +46,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.feri.redmedalertandroidapp.api.HealthDataApiManager;
 import com.feri.redmedalertandroidapp.api.RetrofitClient;
 import com.feri.redmedalertandroidapp.api.config.ApiClient;
-import com.feri.redmedalertandroidapp.api.service.ApiCallback;
+import com.feri.redmedalertandroidapp.api.config.ApiClient.ApiCallback;
 import com.feri.redmedalertandroidapp.api.service.ApiService;
 import com.feri.redmedalertandroidapp.auth.service.AuthApiService;
 import com.feri.redmedalertandroidapp.auth.service.AuthService;
@@ -106,11 +106,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onConnected() {
                 runOnUiThread(() -> {
-                    Toast.makeText(MainActivity.this,
-                            "Conectat la Health Connect",
-                            Toast.LENGTH_SHORT).show();
+                    String message = healthConnectManager.isUsingRealData() ?
+                            "🟢 Smartwatch conectat - citim date REALE!" :
+                            "🟠 Health Connect - date SIMULATE cu pattern realist (configurează pentru date reale)";
+
+                    Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
                     updateSmartWatchUI(true);
-                    Log.d(TAG, "Health Connect conectat cu succes");
+                    Log.d(TAG, "Health Connect status: " + message);
                 });
             }
 
@@ -118,10 +120,10 @@ public class MainActivity extends AppCompatActivity {
             public void onConnectionFailed(String error) {
                 runOnUiThread(() -> {
                     Toast.makeText(MainActivity.this,
-                            "Eroare Health Connect: " + error,
+                            "Info Health Connect: " + error,
                             Toast.LENGTH_LONG).show();
                     updateSmartWatchUI(false);
-                    Log.e(TAG, "Health Connect connection failed: " + error);
+                    Log.w(TAG, "Health Connect info: " + error);
                 });
             }
 
@@ -130,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     if (data.isEmpty()) {
                         Toast.makeText(MainActivity.this,
-                                "Nu s-au primit date de la Health Connect",
+                                "Nu s-au primit date",
                                 Toast.LENGTH_SHORT).show();
                         if (sensorDataText != null) {
                             sensorDataText.setText("Nu există date disponibile");
@@ -138,9 +140,31 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
 
-                    // Afișează datele în UI
+                    // Verifică tipul de date - reale, simulate sau backup
+                    boolean isRealData = data.containsKey("data_source") && data.get("data_source") == 1.0;
+                    boolean isSimulated = data.containsKey("data_source") && data.get("data_source") == 999.0;
+                    boolean healthConnectAvailable = healthConnectManager != null && healthConnectManager.isHealthConnectAvailable();
+
+                    // Afișează datele în UI cu statusul corect
                     StringBuilder sb = new StringBuilder();
+
+                    if (isRealData) {
+                        sb.append("⌚ DATE REALE (Samsung Galaxy Watch prin Health Connect)\n\n");
+                    } else if (isSimulated) {
+                        if (healthConnectAvailable) {
+                            sb.append("📱 DATE SIMULATE cu pattern realist (Health Connect instalat)\n");
+                            sb.append("⚠️  Pentru date REALE: configurează Samsung Health → Health Connect\n\n");
+                        } else {
+                            sb.append("📱 DATE SIMULATE (Health Connect nu este instalat)\n\n");
+                        }
+                    } else {
+                        sb.append("📱 DATE SIMULATE (backup - verifică configurația)\n\n");
+                    }
+
                     for (Map.Entry<String, Double> entry : data.entrySet()) {
+                        // Omite markerul de date din afișare
+                        if (entry.getKey().equals("data_source")) continue;
+
                         sb.append(formatSensorName(entry.getKey())).append(": ")
                                 .append(formatSensorValue(entry.getKey(), entry.getValue())).append("\n");
                     }
@@ -152,15 +176,20 @@ public class MainActivity extends AppCompatActivity {
                         sensorDataText.setText(sb.toString());
                     }
 
-                    // Trimitere date către server
-                    Log.d(TAG, "Trimitem datele către server: " + data.toString());
+                    // Trimitere date către server cu debugging detaliat
+                    Log.d(TAG, "=== TRIMITERE DATE CĂTRE SERVER ===");
+                    Log.d(TAG, "Numărul de parametri: " + data.size());
+                    for (Map.Entry<String, Double> entry : data.entrySet()) {
+                        Log.d(TAG, "  " + entry.getKey() + " = " + entry.getValue());
+                    }
+
                     ApiClient.getInstance(MainActivity.this).uploadHealthData(data, new ApiCallback() {
                         @Override
                         public void onSuccess() {
                             runOnUiThread(() -> {
-                                Log.d(TAG, "Date trimise cu succes către server");
+                                Log.d(TAG, "✅ API SUCCES: Date trimise cu succes către server");
                                 Toast.makeText(MainActivity.this,
-                                        "✓ Date trimise cu succes către server",
+                                        "✓ Date salvate în baza de date PostgreSQL",
                                         Toast.LENGTH_SHORT).show();
                             });
                         }
@@ -168,9 +197,9 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onError(String error) {
                             runOnUiThread(() -> {
-                                Log.e(TAG, "Eroare la trimiterea datelor către server: " + error);
+                                Log.e(TAG, "❌ API EROARE: " + error);
                                 Toast.makeText(MainActivity.this,
-                                        "✗ Eroare trimitere date: " + error,
+                                        "✗ EROARE salvare: " + error,
                                         Toast.LENGTH_LONG).show();
                             });
                         }
@@ -196,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (PackageManager.NameNotFoundException e) {
             Log.w(TAG, "Health Connect nu este instalat");
             Toast.makeText(this,
-                    "Health Connect nu este instalat. Aplicația va folosi date simulate pentru testare.",
+                    "Notă: Health Connect nu este instalat. Aplicația va folosi date simulate pentru testare.",
                     Toast.LENGTH_LONG).show();
         }
     }
@@ -368,7 +397,9 @@ public class MainActivity extends AppCompatActivity {
                     if (healthConnectManager.isConnected()) {
                         healthConnectManager.disconnect();
                         updateSmartWatchUI(false);
+                        Toast.makeText(this, "Health Connect deconectat", Toast.LENGTH_SHORT).show();
                     } else {
+                        Log.d(TAG, "Inițializare conectare Health Connect");
                         healthConnectManager.requestPermissions();
                     }
                 } else {
@@ -379,7 +410,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Log.e(TAG, "Error with Health Connect connection: " + e.getMessage());
                 Toast.makeText(this,
-                        "Eroare la conectarea Health Connect: " + e.getMessage(),
+                        "Eroare la conectarea smartwatch-ului: " + e.getMessage(),
                         Toast.LENGTH_LONG).show();
             }
         });
@@ -474,18 +505,27 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateSmartWatchUI(boolean isConnected) {
         runOnUiThread(() -> {
-            btnConnectWatch.setText(isConnected ? "Deconectare Health Connect" : "Conectare Health Connect");
-            watchStatusIndicator.setBackgroundResource(
-                    isConnected ? R.drawable.status_connected : R.drawable.status_disconnected
-            );
-
             if (isConnected) {
+                boolean isUsingRealData = healthConnectManager != null && healthConnectManager.isUsingRealData();
+                boolean healthConnectAvailable = healthConnectManager != null && healthConnectManager.isHealthConnectAvailable();
+
+                if (isUsingRealData) {
+                    btnConnectWatch.setText("⌚ Smartwatch Conectat (Date Reale)");
+                    watchStatusIndicator.setBackgroundResource(R.drawable.status_connected);
+                } else if (healthConnectAvailable) {
+                    btnConnectWatch.setText("📱 Date Simulate Realiste (Health Connect)");
+                    watchStatusIndicator.setBackgroundResource(R.drawable.status_simulated);
+                } else {
+                    btnConnectWatch.setText("📱 Simulare Activă (Health Connect N/A)");
+                    watchStatusIndicator.setBackgroundResource(R.drawable.status_simulated);
+                }
                 startSensorDataUI();
-                Toast.makeText(this, "Health Connect conectat cu succes", Toast.LENGTH_SHORT).show();
             } else {
+                btnConnectWatch.setText("Conectare Smartwatch");
+                watchStatusIndicator.setBackgroundResource(R.drawable.status_disconnected);
                 stopSensorDataUI();
                 if (sensorDataText != null) {
-                    sensorDataText.setText("Health Connect deconectat");
+                    sensorDataText.setText("Smartwatch deconectat");
                 }
             }
         });
@@ -561,15 +601,9 @@ public class MainActivity extends AppCompatActivity {
     private void testHealthConnectConnection() {
         Log.d(TAG, "Testăm conexiunea Health Connect");
         if (healthConnectManager != null) {
-            if (healthConnectManager.isConnected()) {
-                Toast.makeText(this, "Health Connect este conectat și funcțional", Toast.LENGTH_SHORT).show();
-                healthConnectManager.readHealthData();
-            } else {
-                Toast.makeText(this, "Health Connect nu este conectat", Toast.LENGTH_SHORT).show();
-                healthConnectManager.requestPermissions();
-            }
+            healthConnectManager.testConnection();
         } else {
-            Toast.makeText(this, "Health Connect nu este inițializat", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Eroare Health Connect: Manager nu este inițializat", Toast.LENGTH_SHORT).show();
         }
     }
 }

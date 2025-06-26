@@ -7,6 +7,7 @@ import androidx.room.Room;
 import com.feri.redmedalertandroidapp.api.database.HealthDatabase;
 import com.feri.redmedalertandroidapp.api.model.HealthDataEntity;
 import com.feri.redmedalertandroidapp.api.config.ApiClient;
+import com.feri.redmedalertandroidapp.api.config.ApiClient.ApiCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
